@@ -1,0 +1,156 @@
+/*
+TagsInput 1.0 - jQuery plugin
+Copyright (c) 2014-2015 O! Interactive, Acuna
+Released under the MIT License <http://www.opensource.org/licenses/mit-license.php> 
+*/
+
+.autocomplete {
+  width: 170px;
+  max-height: 280px;
+  overflow-x: auto;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  padding: 5px;
+  z-index: 9999;
+  display: none;
+}
+
+.autocomplete .none {
+  text-align: center;
+  height: 35px;
+  line-height: 35px;
+  color: #666;
+}
+
+.autocomplete ul {
+  margin: 0;
+  padding: 0;
+}
+
+.autocomplete ul li {
+  clear: both;
+  list-style: none;
+  padding: 5px;
+  color: #666;
+  cursor: pointer;
+}
+
+.autocomplete ul li .outline {
+  font-weight: bold;
+}
+
+.autocomplete ul li a {
+  text-decoration: none;
+}
+
+.autocomplete ul li .title {
+  font-weight: bold;
+}
+
+.autocomplete ul li .info {
+  clear: both;
+  font-size: 9px;
+}
+
+.autocomplete ul li:hover,
+.autocomplete ul li a:hover {
+  color: #fff;
+}
+
+
+.tagsinput-wrapper {
+  overflow: auto;
+}
+
+.tagsinput-wrapper .input {
+  border: none;
+  margin: 0;
+  padding: 9px 0 0 0;
+  background: transparent;
+  outline: 0;
+  color: #ccc;
+  font-size: 10px;
+  width: 100%;
+}
+
+.tagsinput-wrapper .active {
+  color: #333;
+  font-size: 11px;
+}
+
+.tagsinput span {
+  border: 1px solid #a5d24a;
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  border-radius: 2px;
+  display: block;
+  float: left;
+  text-decoration: none;
+  background: #cde69c;
+  margin: 0 5px 5px 0;
+  padding: 5px 15px;
+  font-family: helvetica;
+  font-size: 11px;
+  vertical-align: middle;
+}
+
+.tagsinput span a {
+  padding-left: 12px;
+}
+
+.tagsinput.small span a {
+  padding-left: 0;
+}
+
+.tagsinput span , .tagsinput span a {
+  color: #638421 !important;
+}
+
+.tagsinput span a {
+  text-decoration: none;
+}
+
+.tagsinput span a:hover {
+  color: #7da332 !important;
+}
+
+.tagsinput span.selected {
+  border: 1px solid #999933;
+  background: #ffff99;
+  color: #999933 !important;
+}
+
+.tagsinput span.invalid {
+  background: #fbd8db;
+  color: #90111a !important;
+}
+
+.tagsinput span a.del {
+  text-decoration: none;
+}
+
+.tagsinput.normal span a.del {
+  padding-left: 7px;
+}
+
+.inputselect-autocomplete {
+  min-width: 150px;
+}
+
+.inputselect input {
+  width: 115px;
+  height: 20px;
+  border: none;
+  padding-top: 3px;
+  margin: 0;
+  background: transparent;
+  outline: 0;
+}
+
+.inputselect input.empty {
+  color: #333;
+}
+
+.inputselect .image {
+  padding-left: 10px;
+}

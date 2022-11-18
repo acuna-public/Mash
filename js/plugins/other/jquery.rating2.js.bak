@@ -1,0 +1,70 @@
+/*
+ niceRating 1.0 - jQuery plugin
+ written by O! Interactive, Acuna
+ http://ointeractive.ru
+ 
+ Copyright (c) 2015 O! Interactive, Acuna (http://ointeractive.ru)
+ Dual licensed under the MIT (MIT-LICENSE.txt)
+ and GPL (GPL-LICENSE.txt) licenses.
+ 
+ Built for jQuery library
+ http://jquery.com
+ 
+ 1.0  24.07.2015
+  Первый приватный релиз
+  
+ */
+	
+	(function ($) {
+		
+		$.fn.rating = function (options) {
+			
+			options = $.extend ({
+        
+        type: 'full',
+        stars: 5,
+        minimal: 0,
+        titles: ['голос', 'голоса', 'голосов'],
+        readOnly: false,
+        click: function () {},
+        callback: function () {},
+        
+			}, options), self = this;
+			
+			if (self.length > 0) {
+        
+        var data = {
+          
+          'area': self.data ('area'),
+          'type': self.data ('type'),
+          'item-id': self.data ('item-id'),
+          'value': parseFloat (self.data ('value') || 0),
+          'votes': parseFloat (self.data ('votes') || ''),
+          
+        };
+        
+        if (data.value > this.options.stars) data.value = this.options.stars;
+        if (data.value < 0) data.value = 0;
+        
+        var
+        voteWrap = $('<div class="vote-wrap"></div>'),
+        voteBlock = $('<div class="vote-block"></div>'),
+        voteStars = $('<div class="vote-stars"></div>'),
+        voteActive = $('<div class="vote-active"></div>');
+        
+        var img = new Image ();
+        img.src = options.image;
+        
+        img.onload = function () {
+          
+          self.width = this.width; // Ширина одной звезды
+          self.height = (this.height / 3); // Высота одной звезды
+          self.init ();
+          
+        };
+        
+			}
+			
+		};
+		
+	})($);

@@ -1,0 +1,9 @@
+.img-circle {
+  -moz-border-radius: 50%; /* Firefox */
+  -webkit-border-radius: 50%; /* Webkit */
+  -khtml-border-radius: 50%; /* KHTML */
+  -o-border-radius: 50%; /* Opera */
+  -ms-border-radius: 50%; /* IE8 */
+  -icab-border-radius: 50%; /* iCab */
+  border-radius: 50%; /* CSS3 */
+}

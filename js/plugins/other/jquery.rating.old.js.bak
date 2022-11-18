@@ -1,0 +1,257 @@
+/** Рейтинг заметок в виде звезд jquery.rating.js
+ *  http://biznesguide.ru/coding/156.html
+ *  Copyright (c) 2011 Шамшур Иван (http:// twitter.com/ivanshamshur)
+ *  Dual licensed under the MIT and GPL licenses
+ */
+ 
+(function ($) {
+	
+	$.rating = function (e, o) {
+		
+		this.options = $.extend ({
+			
+		  type: 'full',
+			stars: 5,
+      minimal: 0,
+			titles: ['голос', 'голоса', 'голосов'],
+			readOnly: false,
+			click: function () {},
+      callback: function () {},
+			
+		}, o || {});
+		
+		this.el = $(e);
+		this.left = 0;
+		this.width = 0;
+		this.height = 0;
+		this._data = {};
+		
+		var self = this;
+		
+		self._data['area'] = this.el.data ('area');
+		self._data['type'] = this.el.data ('type');
+		self._data['item-id'] = this.el.data ('item-id');
+		self._data['value'] = this.el.data ('value');
+		
+		this._data.value = parseFloat (this._data.value) || 0;
+		this._data.votes = parseFloat (this._data.votes) || '';
+		
+		if (this._data.value > this.options.stars) this._data.value = this.options.stars;
+		if (this._data.value < 0) this._data.value = 0;
+		
+		this.old = this._data.value;
+		
+		this.vote_wrap = $('<div class="vote-wrap"></div>');
+		this.vote_block = $('<div class="vote-block"></div>');
+		
+		if (this.options.readOnly == true)
+		this.vote_hover = $('<div class="vote-hover-none"></div>');
+		else
+    this.vote_hover = $('<div class="vote-hover"></div>');
+		
+		this.vote_stars = $('<div class="vote-stars"></div>');
+		this.vote_active = $('<div class="vote-active"></div>');
+		
+		// Загружаем изображение звезд и высчитываем ширину и высоту одной звезды
+		var img = new Image ();
+		img.src = this.options.image;
+		
+		img.onload = function () {
+			
+			self.width = this.width; // Ширина одной звезды
+			self.height = this.height / 3; // Высота одной звезды
+			self.init ();
+			
+		};
+		
+	};
+	
+	var $r = $.rating;
+	
+	$r.fn = $r.prototype = {
+		rating: '2.0'
+  };
+	
+	$r.fn.extend = $r.extend = $.extend;
+		
+    $r.fn.extend ({
+      
+    	init: function () {
+				
+    		this.render ();
+				
+    		if (this.options.readOnly) return;
+				
+    		var self = this, left = 0, width = 0;
+				
+    		this.vote_hover.bind ('mousemove mouseover', function (e) {
+					
+    			if (self.options.readOnly) return;
+					
+    			var $this = $(this), score = 0;
+					
+					left = e.clientX > 0 ? e.clientX: e.pageX;
+					width = left - $this.offset ().left - 2;
+					
+					var max = self.width * self.options.stars,
+							min = self.options.minimal * self.width;
+					
+					if (width > max) width = max;
+					if (width < min) width = min;   
+					
+					score = Math.round (width / self.width * 10) / 10; // Округляем до 1 знака после запятой
+					
+					if (self.options.type == 'half')
+					width = Math.ceil (width / self.width * 2) * self.width / 2;
+					else if (self.options.type != 'float')                 
+					width = Math.ceil (width / self.width) * self.width;  
+					
+					score = Math.round (width / self.width * 10) / 10; 
+					
+					self.vote_active.css ({
+						
+						'width': width,
+						'background-position': 'left center',
+						
+					});
+					
+    		}).bind ('mouseout',function () {
+					
+    			if (self.options.readOnly) return;
+					self.reset ();
+          
+    		}).bind ('click.rating', function () {
+					
+					if (self.options.readOnly) return;
+					
+					var score = Math.round (width / self.width * 10) / 10; 
+					
+					if (score > self.options.stars) score = self.options.stars;
+					if (score < 0) score = 0;
+					
+					self.old = self._data.value;
+					self._data.value = (self._data.value * self._data.votes + score) / (self._data.votes + 1);
+					self._data.value = Math.round (self._data.value * 100) / 100;
+					self._data.score = score;
+					
+					self.send ();
+					
+					self.options.readOnly = true;        
+					
+    		});
+    		
+    	},
+			
+			set: function () {
+				
+    		this.vote_active.css ({
+					
+    			'width':this._data.value * this.width,
+    			'background-position':'left bottom',
+					
+    		});
+				
+    	},
+			
+			reset: function () {
+				
+    		this.vote_active.css ({
+					
+    			'width':this.old * this.width,
+    			'background-position':'left bottom',
+					
+    		});
+				
+    	},
+			
+			render: function () {
+				
+          alert (this.height + '-' + this.width);
+          
+    		this.el.html (this.vote_wrap.append (
+					
+					this.vote_hover.css ({
+						
+						padding: '0 4px',
+						height: this.height,
+						width: this.width * this.options.stars
+						
+					})
+					
+    		));
+				
+        this.vote_block.append (
+					
+					this.vote_stars.css ({
+						
+						height: this.height,
+						width: this.width * this.options.stars,
+						background: 'url("' + this.options.image + '") left top',
+						
+					}),
+					
+					this.vote_active.css ({
+						
+						height: this.height,
+						width: this._data.value * this.width,
+						background: 'url("' + this.options.image + '") left bottom',
+						
+					})
+					
+				).appendTo (this.vote_hover);
+				
+    	},
+			
+			send: function (score) {
+    		
+        this._data.votes++;
+				
+    		var self = this;
+        var data = self.options.click (this._data);
+				
+    		self.set ();
+				
+				if (typeof self.options.callback == 'function')
+				self.options.callback.apply (self, [data]);
+				
+    	},
+			
+			declOfNum: function (number) {
+				
+				if (number <= 0) return '';
+				number = Math.abs (Math.floor (number));
+				cases = [2, 0, 1, 1, 1, 2];  
+				// return number + ' ' + this.options.titles[(number % 100 > 4 && number % 100 < 20) ? 2 : cases[(number%10 < 5)?number%10:5]];
+				return '';
+				
+			}
+			
+    });
+    
+    $.fn.rating = function (o) {
+    	
+    	if (typeof o == 'string') {
+				
+				var instance = $(this).data ('rating'), args = Array.prototype.slice.call (arguments, 1);
+				return instance[o].apply (instance, args);
+				
+			} else {
+				
+				return this.each (function () {
+					
+					var instance = $(this).data ('rating');
+					
+					if (instance) {
+						
+						if (o) $.extend (instance.options, o);
+						instance.init ();
+						
+					} else $(this).data ('rating', new $r (this, o));
+					
+				});
+				
+			}
+			
+    };
+		
+	})(jQuery);

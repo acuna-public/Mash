@@ -1,0 +1,97 @@
+/*
+Player 1.2 - jQuery plugin
+Copyright (c) 2014-2015, 2017 O! Interactive, Acuna
+Released under the MIT License <http://www.opensource.org/licenses/mit-license.php>
+*/
+
+.audio-player.default {
+  clear: both;
+}
+
+.audio-player .button {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  vertical-align: middle;
+  /*background-color: #3366ff;
+  border-radius: 3px;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=60)";
+  filter: alpha(opacity=60);
+  -khtml-opacity: 0.6;
+  -moz-opacity: 0.6;
+  opacity: 0.6;*/
+}
+
+.audio-player .button.play,
+.audio-player .button.resume {
+  background-image: url('../images/auplayer/play.png');
+}
+
+.audio-player .button.pause {
+  background-image: url('../images/auplayer/pause.png');
+}
+
+.audio-player .button.stop {
+  background-image: url('../images/auplayer/stop.png');
+}
+
+.audio-player.default .slider {
+  display: inline-block;
+  border: 1px solid #f0f0f0;
+  background-color: #fff;
+  height: 16px;
+  color: #666;
+  font-family: "Lucida Grande", "Arial Unicode MS", sans-serif;
+  font-size: 11px;
+  text-align: center;
+  vertical-align: middle;
+  z-index: 1;
+}
+
+.audio-player.default .slider,
+.audio-player.default .slider .ui-slider-range {
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  border-radius: 2px;
+}
+
+.audio-player.default .slider a {
+  color: #666;
+}
+
+.audio-player.default .slider .ui-slider-handle {
+  display: none;
+}
+
+.audio-player.default .slider .ui-slider-range {
+  background-color: #406098;
+  opacity: 0.5;
+  height: 100%;
+}
+
+.audio-player.default .slider.seek {
+  width: 230px;
+  padding-left: 5px;
+  overflow: hidden;
+  text-align: left;
+}
+
+.audio-player.default .slider.seek.progress .ui-slider-range {
+  background: #ccc;
+}
+
+.audio-player.default .slider.time {
+  width: 30px;
+  padding: 0 10px 0 10px;
+}
+
+.audio-player.default .slider.volume {
+  width: 60px;
+}
+
+.audio-player.default .slider.seek .ui-slider-range {
+  margin-top: -16px;
+}

@@ -1,0 +1,46 @@
+.filetree {
+  width: 200px;
+  height: 500px;
+  border-top: solid 1px #BBB;
+  border-left: solid 1px #BBB;
+  border-bottom: solid 1px #FFF;
+  border-right: solid 1px #FFF;
+  background: #FFF;
+  overflow: scroll;
+  padding: 5px;
+}
+
+ul.jqueryFileTree {
+  font-family: Verdana, sans-serif;
+  font-size: 11px;
+  line-height: 18px;
+  padding: 0px;
+  margin: 0px;
+}
+
+ul.jqueryFileTree li {
+  list-style: none;
+  padding: 0px;
+  padding-left: 20px;
+  margin: 0px;
+  white-space: nowrap;
+}
+
+ul.jqueryFileTree a {
+  color: #333;
+  text-decoration: none;
+  display: block;
+  padding: 0px 2px;
+}
+
+ul.jqueryFileTree a:hover {
+  background: #BDF;
+}
+
+.jqueryFileTree li.directory { background: url('../images/directory.png') left top no-repeat; }
+.jqueryFileTree li.expanded { background: url('../images/folder_open.png') left top no-repeat; }
+.jqueryFileTree li.file { background: url('../images/file.png') left top no-repeat; }
+.jqueryFileTree li.wait { background: url('../images/spinner.gif') left top no-repeat; }
+.jqueryFileTree li.ext_css { background: url('../images/css.png') left top no-repeat; }
+.jqueryFileTree li.ext_js { background: url('../images/script.png') left top no-repeat; }
+.jqueryFileTree li.ext_tpl { background: url('../images/html.png') left top no-repeat; }

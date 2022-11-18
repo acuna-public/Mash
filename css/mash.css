@@ -1,0 +1,122 @@
+  ::-webkit-scrollbar  {
+    width: 6px;
+  }
+  
+  ::-webkit-scrollbar-track  {
+    background-color: #efefef; 
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    -moz-border-radius: 4px; /* Firefox */
+    -webkit-border-radius: 4px; /* Webkit */
+    -khtml-border-radius: 4px; /* KHTML */
+    -o-border-radius: 4px; /* Opera */
+    -ms-border-radius: 4px; /* IE8 */
+    -icab-border-radius: 4px; /* iCab */
+    border-radius: 4px; /* CSS3 */
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: #bbb; 
+  }
+  
+  .scrollable {
+    scrollbar-color: #bbb #f1f1f1; /* Firefox */
+  }
+  
+	.mash-right {
+		float: right;
+	}
+	
+	.mash-left {
+		float: left;
+	}
+	
+	.mash-hide {
+		display: none;
+	}
+	
+	.mash-show {
+		display: block;
+	}
+  
+  .mash-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  
+  .mash-inline li {
+    display: inline-block;
+  }
+  
+  .mash-crop {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .mash-crop .image {
+    position: absolute;
+    margin: 0 auto;
+    width: auto;
+  }
+  
+  .mash-text-justify {
+    text-align: justify;
+  }
+  
+  .content-inside {
+    padding-bottom: 60px;
+    padding-left: 200px;
+  }
+  
+  .footer {
+    height: 60px;
+    margin-top: -60px;
+  }
+  
+  .container {
+    height: 60px;
+  }
+  
+  .mash-wrapper{
+    margin:auto;max-width:75rem;
+  }
+  
+  aside,footer,header,main,section {
+    display: block;
+  }
+  
+  main {
+    background: #000;
+  }
+  
+  .mash-header {
+    background: #03a9f4;
+  }
+  
+  .mash-hero {
+    background: #d22b1f;
+  }
+  
+  @media screen and (min-width:640px) {
+    
+    .mash-flex-container{
+      display: flex;
+    }
+    
+  }
+  
+  .mash-content {
+    flex: auto;
+    background: #129a22;
+  }
+  
+  .mash-sidebar {
+    flex: 0 1 300px;
+    background: #673ab7;
+  }
+  
+  .mash-footer {
+    background: #616161;
+  }

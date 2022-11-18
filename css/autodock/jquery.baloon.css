@@ -1,0 +1,49 @@
+.baloon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 3;
+}
+
+.baloon.baloon-default {
+  color: #fff;
+  background: #000;
+  text-align: center;
+  padding: 15px 90px;
+  font-size: 13px;
+  -moz-border-radius: 30px; /* Firefox */
+  -webkit-border-radius: 30px; /* Webkit */
+  -khtml-border-radius: 30px; /* KHTML */
+  -o-border-radius: 30px; /* Opera */
+  -ms-border-radius: 30px; /* IE8 */
+  -icab-border-radius: 30px; /* iCab */
+  border-radius: 30px; /* CSS3 */
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)"; /* IE 8 */
+  filter: alpha(opacity=50); /* IE 5-7 */
+  -moz-opacity: 0.5; /* Netscape */
+  -khtml-opacity: 0.5; /* Safari 1.x */
+  opacity: 0.5; /* Good browsers */
+}
+
+.baloon-close {
+  position: absolute;
+  top: 15px;
+  right: 5px;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  background: url('../images/close.png');
+}
+
+.baloon .caption {
+  position: relative;
+}
+
+.baloon .caption.top-right {
+  top: -15px;
+  right: -15px;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  background: url('../images/close.png');
+}

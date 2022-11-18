@@ -1,0 +1,11 @@
+.highlighter.php {
+  color: #000;
+}
+
+.highlighter.php .command {
+  color: #0033cc;
+}
+
+.highlighter.php .operator {
+  color: #6600cc;
+}

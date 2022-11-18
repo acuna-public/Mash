@@ -1,0 +1,30 @@
+.vote-wrap {
+  overflow: hidden;
+  width: 17px;
+  height: 17px;
+}
+
+.vote-block {
+  position: relative;
+}
+
+.vote-stars {
+  position: absolute;
+  left: 0;
+  top: 0;
+  background-image: url('../lisas_images/rating.png');
+  background-position: left top;
+}
+
+.vote-body {
+  position: absolute;
+  left: 0;
+  top: 0;
+  background-image: url('../lisas_images/rating.png');
+  background-position: left bottom;
+}
+
+.vote-hover {
+  background-image: url('../lisas_images/rating.png');
+  background-position: left top;
+}

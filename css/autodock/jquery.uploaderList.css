@@ -1,0 +1,51 @@
+.uploader-list {
+  margin: 0;
+  padding: 0;
+  clear: both;
+  list-style: none;
+  text-align: left;
+}
+
+.uploader-list li {
+  margin: 0 10px 10px 0;
+  float: left;
+  width: 100px;
+  height: 80px;
+  overflow: hidden;
+  background: url('../images/nophoto.jpg') no-repeat center;
+  position: relative;
+}
+
+.uploader-list li .image-link {
+  position: absolute;
+}
+
+.uploaded-images li .image-link img {
+  height: 80px;
+  left: 0;
+  top: -20px;
+}
+
+.uploader-list li .delete-link {
+  display: block;
+  position: relative;
+  left: 79px;
+  top: 1px;
+}
+
+.uploader-list li .delete-link a {
+  display: block;
+  width: 20px;
+  height: 20px;
+}
+
+.uploader-list li .delete-link a:hover {
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  background: url('../images/cross.png') no-repeat center;
+  background-color: rgba(0,0,0,.3);
+}
