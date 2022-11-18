@@ -131,7 +131,7 @@
 						
 					}
 					
-					//if (!$is_announce)
+					//if (!$is_announce) // TODO
 					//$value = url_encode (get_filename ($value, 1));
 					
 				}

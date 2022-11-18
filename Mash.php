@@ -149,10 +149,6 @@
 				
 				$this->date = new \Date ($this->time (), ['strtotime' => 0]);
 				
-				if (file_exists ($this->loadDir (['classes', 'autodock'])))
-				foreach ($this->scanDir (['classes', 'autodock']) as $file)
-				require $file;
-				
 				//require $this->loadMashFile (['Adapter']);
 				//require $this->loadMashFile (['AdapterHelper']);
 				require $this->loadMashFile (['files', 'robots']);
