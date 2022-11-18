@@ -131,8 +131,8 @@
 						
 					}
 					
-					if (!$is_announce)
-					$value = url_encode (get_filename ($value, 1));
+					//if (!$is_announce)
+					//$value = url_encode (get_filename ($value, 1));
 					
 				}
 				
