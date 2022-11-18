@@ -1,5 +1,5 @@
 <?php
-	debug (__FILE__);
+	
 	class Locale {
 		
 		public
