@@ -76,7 +76,7 @@
 			return $this->find ($selector);
 		}
 		
-		static function testSelectors () {
+		static function testSelectors (int $offset = -1, bool $cache = true) {
 			
 			$selectors = [
 				
@@ -85,21 +85,22 @@
 				'parent > child' => '//parent/child',
 				'parent + child' => '//child/following::parent', // TODO
 				'elem1, elem2' => '//elem1 | //elem2',
-				'.class' => '//*[contains(concat(\' \', normalize-space(@class), \' \'), \' class \')]',
+				'.class' => '//*[contains (concat (\' \', normalize-space (@class), \' \'), \' class \')]',
 				'#id' => '//*[@id=\'id\']',
 				'[attr]' => '//*[@attr]',
+				'[attr1][attr2]' => '//*[@attr1 and @attr2]',
 				'[attr=value]' => '//*[@attr=\'value\']',
-				'[attr*=value]' => '//*[contains(@attr, \'value\')]',
-				'[attr^=value]' => '//*[starts-with(@attr, \'value\')]',
-				'[attr$=value]' => '//*[ends-with(@attr, \'value\')]',
-				'[attr|=value]' => '//*[starts-with(@attr, \'value-\')]', // TODO
-				'[attr~=value]' => '//*[contains(concat(\' \', normalize-space(@attr), \' \'), \' value \')]',
+				'[attr*=value]' => '//*[contains (@attr, \'value\')]',
+				'[attr^=value]' => '//*[starts-with (@attr, \'value\')]',
+				'[attr$=value]' => '//*[ends-with (@attr, \'value\')]',
+				'[attr|=value]' => '//*[starts-with (@attr, \'value-\')]', // TODO
+				'[attr~=value]' => '//*[contains (concat (\' \', normalize-space (@attr), \' \'), \' value \')]',
 				':first-child' => '//*[1]',
-				':last-child' => '//*[last()]',
-				':nth-child(1)' => '//*[position() = 1]',
-				':nth-child(3n+0)' => '//*[(position() - 0) mod 3 = 0 and position() >= 0]',
-				':nth-child(even)' => '//*[position() mod 2 = 0 and position() >= 0]',
-				':nth-child(odd)' => '//*[(position() - 1) mod 2 = 0 and position() >= 1]',
+				':last-child' => '//*[last ()]',
+				':nth-child(1)' => '//*[position () = 1]',
+				':nth-child(3n+0)' => '//*[(position () - 0) mod 3 = 0 and position () >= 0]',
+				':nth-child(even)' => '//*[position () mod 2 = 0 and position () >= 0]',
+				':nth-child(odd)' => '//*[(position () - 1) mod 2 = 0 and position () >= 1]',
 				
 			];
 			
@@ -107,12 +108,12 @@
 			
 			foreach ($selectors as $selector => $xpath2) {
 				
-				$xpath = HTMLElement::selector2xpath ($selector);
+				$xpath = HTMLElement::selector2xpath ($selector, $offset, $cache);
 				
-				if ($xpath == $xpath2)
+				if ($xpath == HTMLElement::offset ($xpath2, $offset))
 					$results[] = [1, $selector, $xpath];
 				else
-					$results[] = [0, $selector, $xpath, $xpath2];
+					$results[] = [0, $selector, $xpath, HTMLElement::offset ($xpath2, $offset)];
 				
 			}
 			
@@ -124,14 +125,39 @@
 			return $this->newInstance ()->html ();
 		}
 		
+		static function test ($selector = '') {
+			
+			if (!$selector) {
+				
+				$output = '<table>
+	';
+				
+				foreach (HTMLDocument::testSelectors () as $result) {
+					
+					if ($result[0])
+						$output .= '<tr style="color:green;">
+		<td style="padding-right:30px;">'.$result[1].'</td>
+		<td>'.$result[2].'</td>
+	</tr>
+	';
+					else
+						$output .= '<tr style="color:red;">
+		<td style="padding-right:30px;">'.$result[1].'</td>
+		<td>'.$result[2].' <i>but expected</i> '.$result[3].'</td>
+	</tr>
+	';
+					
+				}
+				
+				$output .= '<table>';
+				
+			} else $output = HTMLElement::selector2xpath ($selector);
+			
+			return $output;
+			
+		}
+		
 	}
-	
-	/*foreach (HTMLDocument::testSelectors () as $result)
-		if ($result[0])
-			debug ('<span style="color:green;"><b>'.$result[1].'</b>: '.$result[2].'</span>');
-		else
-			debug ('<span style="color:red;"><b>'.$result[1].'</b>: '.$result[2].' <i>but expected</i> '.$result[3].'</span>');
-		*/
 	
 	class HTMLElement {
 		
@@ -173,151 +199,168 @@
 			$expr = '(\((?P<expr>[^\)]+)\))';
 			
 			$tag = '(?P<tag>[a-z0-9]+)?';
-			$attr = '(\[(?P<attr>\S+?)(\=(?P<value>[^\]]+))?\]+)?';
 			$id = '(\#(?P<id>[^\s:>#\.]+))?';
 			$class = '(\.(?P<class>[^\s:>]+))?';
 			$pseudo = '(:(?P<pseudo>'.$child.')'.$expr.'?)?';
+			$attr = '(\[(?P<attr>\S+?)(=(?P<value>[^\]]+))?\]+)?';
 			$rel = '\s*(?P<rel>[\>\,\+])?';
 			
-			return '/'.$tag.$attr.$id.$class.$pseudo.$rel.'/isS';
+			return '/'.$id.$class.$pseudo.$tag.$attr.$rel.'/isS';
 			
 		}
 		
-		static function selector2xpath ($selector, $offset = -1, $cache = true, $rel = '', $level = 0) {
+		static function selector2xpath (string $selector, int $offset = -1, bool $cache = true) {
 			
-			$key = $selector.($rel ? $rel : '*');
+			$query = '';
 			
-			if (!$cache or !isset (HTMLDocument::$cache[$key])) {
+			if (!$cache or !isset (HTMLDocument::$cache[$selector])) {
 				
-				if (preg_match (self::getRegexp (), $selector, $match)) {
+				if (preg_match_all (self::getRegexp (), $selector, $match)) {
 					
-					$brackets = [];
-					
-					if (is_isset ('id', $match))
-						$brackets[] = '@id=\''.$match['id'].'\'';
-					
-					if (is_isset ('attr', $match)) {
+					$replaces = [
 						
-						if (is_isset ('value', $match)) {
+						'*' => 'contains',
+						'^' => 'starts-with',
+						'$' => 'ends-with',
+						
+					];
+					
+					//print_r ($match);
+					
+					$rel = '';
+					$i2 = 0;
+					
+					foreach ($match[0] as $i => $item) if (trim ($item)) {
+						
+						$brackets = [];
+						
+						if ($match['id'][$i])
+							$brackets[] = '@id=\''.$match['id'][$i].'\'';
+						
+						$bracket = '';
+						$i3 = 0;
+						$attr = trim ($match['attr'][$i2]);
+						
+						if ($rel != '>') {
 							
-							$replaces = [
+							while ($attr = trim ($match['attr'][$i2])) {
 								
-								'*' => 'contains',
-								'^' => 'starts-with',
-								'$' => 'ends-with',
+								if ($i3 > 0) $bracket .= ' and ';
 								
-							];
-							
-							if (isset ($replaces[substr ($match['attr'], -1)]) and $type = $replaces[substr ($match['attr'], -1)])
-								$brackets[] = $type.'(@'.substr ($match['attr'], 0, -1).', \''.$match['value'].'\')';
-							elseif (substr ($match['attr'], -1) == '~')
-								$brackets[] = $replaces['*'].'(concat(\' \', normalize-space(@'.substr ($match['attr'], 0, -1).'), \' \'), \' '.$match['value'].' \')';
-							elseif (substr ($match['attr'], -1) == '|')
-								$brackets[] = $replaces['^'].'(@'.substr ($match['attr'], 0, -1).', \''.$match['value'].'-\')';
-							else
-								$brackets[] = '@'.$match['attr'].'=\''.$match['value'].'\'';
-							
-						} else $brackets[] = '@'.$match['attr'];
-						
-					}
-					
-					if (is_isset ('class', $match)) {
-						
-						foreach (explode ('.', $match['class']) as $class) // .class1.class2
-							$brackets[] = 'contains(concat(\' \', normalize-space(@class), \' \'), \' '.$class.' \')';
-						
-					}
-					
-					if (is_isset ('pseudo', $match)) {
-						
-						if ($match['pseudo'] == 'first-child')
-							$brackets[] = '1';
-						elseif ($match['pseudo'] == 'last-child')
-							$brackets[] = 'last()';
-						elseif ($match['pseudo'] == 'nth-child')
-						if (is_isset ('expr', $match)) {
-							
-							$e = $match['expr'];
-							
-							if ($e == 'odd')
-								$brackets[] = '(position() - 1) mod 2 = 0 and position() >= 1';
-							elseif ($e == 'even')
-								$brackets[] = 'position() mod 2 = 0 and position() >= 0';
-							elseif (preg_match ('/^[0-9]+$/', $e))
-								$brackets[] = 'position() = '.$e;
-							elseif (preg_match ('/^((?P<mul>[0-9]+)n\+)(?P<pos>[0-9]+)$/is', $e, $esubs)) {
+								if ($value = $match['value'][$i2]) {
+									
+									$last = substr ($attr, -1);
+									
+									if (isset ($replaces[$last]) and $type = $replaces[$last])
+										$bracket .= $type.' (@'.substr ($attr, 0, -1).', \''.$value.'\')';
+									elseif ($last == '~')
+										$bracket .= $replaces['*'].' (concat (\' \', normalize-space (@'.substr ($attr, 0, -1).'), \' \'), \' '.$value.' \')';
+									elseif ($last == '|')
+										$bracket .= $replaces['^'].' (@'.substr ($attr, 0, -1).', \''.$value.'-\')';
+									else
+										$bracket .= '@'.$attr.'=\''.$value.'\'';
+									
+								} else $bracket .= '@'.$attr;
 								
-								if (is_isset ('mul', $esubs))
-									$brackets[] = '(position() - '.$esubs['pos'].') mod '.$esubs['mul'].' = 0 and position() >= '.$esubs['pos'].'';
-								else
-									$brackets[] = $e;
+								$i2++;
+								$i3++;
+								
+							}
+							
+							if ($rel) $i2++;
+							
+						}
+						
+						if ($bracket) $brackets[] = $bracket;
+						
+						if ($match['class'][$i])
+							foreach (explode ('.', $match['class'][$i]) as $class) // .class1.class2
+								$brackets[] = 'contains (concat (\' \', normalize-space (@class), \' \'), \' '.$class.' \')';
+						
+						if ($pseudo = $match['pseudo'][$i]) {
+							
+							if ($pseudo == 'first-child')
+								$brackets[] = '1';
+							elseif ($pseudo == 'last-child')
+								$brackets[] = 'last ()';
+							elseif ($pseudo == 'nth-child')
+							if ($e = $match['expr'][$i]) {
+								
+								if ($e == 'odd')
+									$brackets[] = '(position () - 1) mod 2 = 0 and position () >= 1';
+								elseif ($e == 'even')
+									$brackets[] = 'position () mod 2 = 0 and position () >= 0';
+								elseif (preg_match ('/^[0-9]+$/', $e))
+									$brackets[] = 'position () = '.$e;
+								elseif (preg_match ('/^((?P<mul>[0-9]+)n\+)(?P<pos>[0-9]+)$/is', $e, $esubs)) {
+									
+									if (is_isset ('mul', $esubs))
+										$brackets[] = '(position () - '.$esubs['pos'].') mod '.$esubs['mul'].' = 0 and position () >= '.$esubs['pos'];
+									else
+										$brackets[] = $e;
+									
+								}
 								
 							}
 							
 						}
 						
-					}
-					
-					$query = '';
-					
-					//debug ($match);
-					
-					if ($rel != '+' or $level > 1) {
-						
-						if ($rel == ',') $query .= ' | ';
-						if ($rel != '+') $query .= ($rel == '>' ? '/' : '//');
-						
-						if (is_isset ('tag', $match))
-							$query .= $match['tag'];
-						else
-							$query .= '*';
-						
-						$query .= (($c = count ($brackets)) ? ($c > 1 ? '[('.implode (') and (', $brackets).')]' : '['.implode (' and ', $brackets).']') : '');
-						
-					} elseif ($rel == '+') {
-						
-						$query .= (($c = count ($brackets)) ? ($c > 1 ? '[('.implode (') and (', $brackets).')]' : '['.implode (' and ', $brackets).']') : '');
-						
-						if (isset ($match['rel']) and $match['rel'] == '+')
-							$query .= '/following::';
-						
-						$query .= (($c = count ($brackets)) ? ($c > 1 ? '[('.implode (') and (', $brackets).')]' : '['.implode (' and ', $brackets).']') : '');
-						
-					}
-					
-					++$level;
-					
-					if (strpos ($selector, '+') !== false) {
-						
-						$parts = preg_split ('/\s+\+\s+/', $selector);
-						
-						if (isset ($parts[1]) and !is_numeric ($parts[1])) {
+						if ($brackets or $match['tag'][$i])
+						if (!$attr or $match['rel'][$i] != '>') {
 							
-							$query .= self::selector2xpath ($parts[1], $offset, $cache, '+', $level);
-							$query .= self::selector2xpath ($parts[0], $offset, $cache, '+', $level);
+							if ($rel == ',')
+								$query .= ' | ';
+							elseif ($rel == '+')
+								$query .= '/following::';
+							
+							if ($rel == '>')
+								$query .= '/';
+							else
+								$query .= '//';
+							
+							if ($tag = $match['tag'][$i])
+								$query .= $tag;
+							else
+								$query .= '*';
 							
 						}
 						
-					} elseif ($left = trim (substr ($selector, strlen ($match[0]))))
-						$query .= self::selector2xpath ($left, $offset, $cache, (isset ($match['rel']) ? $match['rel'] : ''));
+						if ($c = count ($brackets)) {
+							
+							if ($c > 1)
+								$query .= '[('.implode ('', $brackets).')]';
+							else
+								$query .= '['.implode ('', $brackets).']';
+							
+						}
+						
+						if ($match['rel'][$i])
+							$rel = $match['rel'][$i];
+						
+					}
 					
-					if ($cache) HTMLDocument::$cache[$key] = $query;
+					if ($cache) HTMLDocument::$cache[$selector] = $query;
 					
 				}
 				
-			} else $query = HTMLDocument::$cache[$key];
-			
-			//if ($offset >= 0) $query .= '['.($offset + 1).']';
+			} else $query = HTMLDocument::$cache[$selector];
 			
 			return $query;
 			
 		}
 		
-		public function find (string $selector, int $offset = -1) {
+		static function offset ($query, $offset) {
+			
+			if ($offset > -1) $query .= '['.($offset + 1).']';
+			return $query;
+			
+		}
+		
+		public function find (string $selector, int $offset = -1, bool $cache = true) {
 			
 			$xpath = new DOMXpath ($this->getDom ($this->dom));
 			
-			$query = self::selector2xpath ($selector, $offset, true);
+			$query = self::selector2xpath ($selector, $offset, $cache);
 			
 			if ($nodes = $xpath->query ($query)) {
 				
@@ -466,7 +509,7 @@
 			
 		}
 		
-		function remove ($selector = '', $offset = -1): HTMLElement {
+		function remove (string $selector = '', int $offset = -1, bool $cache = true): HTMLElement {
 			
 			if ($selector) {
 				
@@ -475,7 +518,7 @@
 				
 				$xpath = new DOMXpath ($elem->dom);
 				
-				$query = self::selector2xpath ($selector, $offset, true);
+				$query = self::selector2xpath ($selector, $offset, $cache);
 				
 				if ($nodes = $xpath->query ($query)) {
 					
@@ -489,7 +532,7 @@
 					
 				}
 				
-				$query = self::selector2xpath ('root', 0);
+				$query = self::selector2xpath ('root', 0, $cache);
 				
 				if ($nodes = $xpath->query ($query))
 					$elem->dom = $nodes->item (0);
