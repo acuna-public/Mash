@@ -497,44 +497,48 @@
 						
 						$this->item->data = $this->query[(int) $this->info['handle']];
 						
-						if ($this->debug == self::REPORT_QUERY)
-							$this->item->data['query_action'] ($this);
-						
-						if (
-							isset ($this->options['proxy']) and
-							is_isset (CURLOPT_PROXY, $this->item->data['options']) and
-							!$this->item->isOK ()
-						) {
+						if ($this->item->data['url']) {
 							
-							foreach ($this->change_proxy () as $key => $value)
-								$this->item->data['options'][$key] = $value;
+							if ($this->debug == self::REPORT_QUERY)
+								$this->item->data['query_action'] ($this);
 							
-							$this->make_query ($this->item->data);
-							++$running; // Important!
-							
-						} else {
-							
-							if ($i2 < $total) {
+							if (
+								isset ($this->options['proxy']) and
+								is_isset (CURLOPT_PROXY, $this->item->data['options']) and
+								!$this->item->isOK ()
+							) {
 								
-								$this->make_query ($this->query ($i, $i2)); // Продожаем делать запросы дальше
-								++$i2;
+								foreach ($this->change_proxy () as $key => $value)
+									$this->item->data['options'][$key] = $value;
+								
+								$this->make_query ($this->item->data);
+								++$running; // Important!
+								
+							} else {
+								
+								if ($i2 < $total) {
+									
+									$this->make_query ($this->query ($i, $i2)); // Продожаем делать запросы дальше
+									++$i2;
+									
+								}
+								
+								if ($this->item->check_handle ()) {
+									
+									if ($callback)
+										$callback ($this->item);
+									else
+										$output[] = $this->item;
+									
+								} else ++$running;
 								
 							}
 							
-							if ($this->item->check_handle ()) {
-								
-								if ($callback)
-									$callback ($this->item);
-								else
-									$output[] = $this->item;
-								
-							} else ++$running;
+							//debug ($this->item->getInfo (['url']));
 							
-						}
-						
-						//debug ($this->item->getInfo (['url']));
-						
-						$this->remove_handle ($this->info['handle']);
+							$this->remove_handle ($this->info['handle']);
+							
+						} else throw new \CurlException ('URL is empty', $this);
 						
 					}
 					

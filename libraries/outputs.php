@@ -694,23 +694,24 @@ creates
 		
 	}
 	
-	function array2json (array $str = [], int $flags = 0) {
+	function array2json (array $str = [], int $flags = 0, int $depth = 512) {
 		
 		$flags |= JSON_UNESCAPED_UNICODE;
 		$flags |= JSON_UNESCAPED_SLASHES;
 		$flags |= JSON_THROW_ON_ERROR;
 		$flags |= JSON_UNESCAPED_LINE_TERMINATORS;
 		
-		return json_encode ($str, $flags);
+		return json_encode ($str, $flags, $depth);
 		
 	}
 	
-	function json2array ($str, $flags = JSON_THROW_ON_ERROR, $depth = 512) {
+	function json2array ($str, $flags = 0, $depth = 512) {
 		
 		$flags |= JSON_INVALID_UTF8_SUBSTITUTE;
 		$flags |= JSON_OBJECT_AS_ARRAY;
+		$flags |= JSON_THROW_ON_ERROR;
 		
-		return json_decode ($str, true, $depth, $flags);
+		return json_decode ($str, null, $depth, $flags);
 		
 	}
 	
