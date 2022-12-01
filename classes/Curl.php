@@ -1,7 +1,7 @@
 <?php
 /*
  ========================================
- Mash Framework (c) 2010-2017, 2019-2021
+ Mash Framework (c) 2010-2017, 2019-2022
  ----------------------------------------
  https://mash.ointeractive.ru/
  ========================================
@@ -58,6 +58,10 @@
 		+ Добавлен возврат кода сервера при методе HEAD
 		+ Мелкие исправления
 		
+	 2.3	01.12.2022
+		+ Оптимизация кода
+		+ Мелкие исправления
+		
 	*/
 	
 	class Curl {
@@ -80,27 +84,28 @@
 			$proxy_num = 0,
 			$report_type = 0,
 			
-			$options = [
+			$settings = [
 				
-				'proxy_options' => [],
 				'streams_num' => 30,
 				'date_adjust' => 0,
 				
 			],
 			
+			$queryOptions = [],
 			$curl_version,
 			$safe_mode;
 		
 		const VERSION = '2.1';
 		
-		private
+		protected
 			$def_options,
 			$query = [],
 			$handle,
 			$multi_handle,
 			$time_start,
-			$query_data = [];
-			
+			$query_data = [],
+			$options = [];
+		
 		function __construct () {
 			
 			require_once 'CurlItem.php';
@@ -129,15 +134,14 @@
 				'return_headers' => false,
 				'no_signal' => 1,
 				'output_file' => '',
+				'user_agent' => '',
 				'referer' => '',
 				'headers' => [],
 				'proxy' => '',
 				'cookies' => [],
 				'access' => [],
-				'custom_opt' => [],
 				'post_fields' => [],
 				'params' => [],
-				'options' => [],
 				'files' => [],
 				'ignore_curl_errors' => [],
 				
@@ -171,22 +175,8 @@
 			
 		}
 		
-		function setOptions ($options) {
-			
-			$this->options = array_extend ($options, $this->options);
-			
-			if (is_isset ('proxy', $this->options)) {
-				
-				if ($this->options['proxy'] instanceof URL)
-					$this->options['proxy'] = $this->options['proxy']->getArray ();
-				
-				if (!$this->options['proxy'])
-					throw new CurlFatalException ('Proxies received, but none of them is working. Please try to add another proxies.');
-				
-				$this->proxy_num = count ($this->options['proxy']);
-				
-			}
-			
+		function setOptions ($settings) {
+			$this->settings = array_extend ($settings, $this->settings);
 		}
 		
 		function setReportType (int $type) {
@@ -200,7 +190,7 @@
 			
 			$info = $this->item->getInfo ();
 			
-			return [$this->item->date->show (4), $info['url'], $info['http_code'].' '.$info['message'], $this->item->data['sleep_time'], $this->item->attempt_num, $this->item->data['options'][CURLOPT_PROXY]];
+			return [$this->item->date->show (4), $info['url'], $info['http_code'].' '.$info['message'], $this->item->data['sleep_time'], $this->item->attempt_num, $this->item->queryOptions[CURLOPT_PROXY]];
 			
 		}
 		
@@ -219,41 +209,51 @@
 			return $this->user_data[$i];
 		}
 		
+		function setOption ($key, $value) {
+			$this->options[$key] = $value;
+		}
+		
 		private function query ($i, $num) {
 			
 			$data = array_extend ($this->query_data[$i][$num], $this->def_options);
 			
-			$options = [];
+			$this->queryOptions = $this->options;
 			
-			if (!is_isset ('user_agent', $data['options']))
-				$data['options']['user_agent'] = get_useragent (1);
+			foreach ($this->settings as $key => $value)
+				$data[$key] = $value;
 			
-			$options[CURLOPT_USERAGENT] = $data['options']['user_agent'];
+			if (!$data['user_agent'])
+				$data['user_agent'] = get_useragent (1);
+			
+			$this->queryOptions[CURLOPT_USERAGENT] = $data['user_agent'];
+			
+			//foreach ($data['custom_opt'] as $key => $value) // TODO
+			//	$this->queryOptions[$key] = $value;
 			
 			$data['url'] = trim ($data['url'].(count ($data['params']) ? '?'.http_build_fquery ($data['params'], 2) : ''));
-			$options[CURLOPT_URL] = $data['url'];
+			$this->queryOptions[CURLOPT_URL] = $data['url'];
 			
 			if ($data['url'] != $data['referer'])
-				$options[CURLOPT_REFERER] = $data['referer'];
+				$this->queryOptions[CURLOPT_REFERER] = $data['referer'];
 			
 			if ($data['no_signal'])
-				$options[CURLOPT_NOSIGNAL] = 1;
+				$this->queryOptions[CURLOPT_NOSIGNAL] = 1;
 			
-			$options[CURLOPT_IPRESOLVE] = CURL_IPRESOLVE_V4;
+			//$this->queryOptions[CURLOPT_IPRESOLVE] = CURL_IPRESOLVE_V4;
 			
-			$options[CURLOPT_TIMEOUT] = $data['query_timeout'];
-			$options[CURLOPT_CONNECTTIMEOUT] = $data['conn_timeout'];
+			$this->queryOptions[CURLOPT_TIMEOUT] = $data['query_timeout'];
+			$this->queryOptions[CURLOPT_CONNECTTIMEOUT] = $data['conn_timeout'];
 			
 			if ($data['output_file'])
-				$options[CURLOPT_STDERR] = $data['output_file'];
+				$this->queryOptions[CURLOPT_STDERR] = $data['output_file'];
 			
 			if ($data['follow_location'])
-				$options[CURLOPT_AUTOREFERER] = true;
+				$this->queryOptions[CURLOPT_AUTOREFERER] = true;
 			
 			switch ($data['method']) {
 				
 				case self::GET:
-					$options[CURLOPT_HTTPGET] = true;
+					$this->queryOptions[CURLOPT_HTTPGET] = true;
 					break;
 				
 				case self::POST: {
@@ -283,11 +283,11 @@
 							
 						}
 						
-						$options[CURLOPT_POSTFIELDS] = $data['post_fields'];
+						$this->queryOptions[CURLOPT_POSTFIELDS] = $data['post_fields'];
 						
 					}
 					
-					$options[CURLOPT_POST] = true;
+					$this->queryOptions[CURLOPT_POST] = true;
 					
 					break;
 					
@@ -295,15 +295,15 @@
 				
 				case self::PUT: {
 					
-					$options[CURLOPT_PUT] = true;
+					$this->queryOptions[CURLOPT_PUT] = true;
 					
 					if ($data['file'])
-						$options[CURLOPT_FILE] = $data['file'];
+						$this->queryOptions[CURLOPT_FILE] = $data['file'];
 					elseif ($data['in_file'])
-						$options[CURLOPT_INFILE] = $data['in_file'];
+						$this->queryOptions[CURLOPT_INFILE] = $data['in_file'];
 					
 					if ($data['in_file_size'])
-						$options[CURLOPT_INFILESIZE] = $data['in_file_size'];
+						$this->queryOptions[CURLOPT_INFILESIZE] = $data['in_file_size'];
 					
 					break;
 					
@@ -311,8 +311,8 @@
 				
 				case self::HEAD: {
 					
-					$options[CURLOPT_NOBODY] = true;
-					$options[CURLOPT_HTTP_VERSION] = CURL_HTTP_VERSION_1_1;
+					$this->queryOptions[CURLOPT_NOBODY] = true;
+					//$this->queryOptions[CURLOPT_HTTP_VERSION] = CURL_HTTP_VERSION_1_1;
 					
 					break;
 					
@@ -321,10 +321,10 @@
 			}
 			
 			if ($data['method'] and !in_array ($data['method'], $this->nocustom_types))
-				$options[CURLOPT_CUSTOMREQUEST] = strtoupper ($data['method']);
+				$this->queryOptions[CURLOPT_CUSTOMREQUEST] = strtoupper ($data['method']);
 			
-			$options[CURLOPT_SSL_VERIFYPEER] = $data['ssl_verify_peer'];
-			$options[CURLOPT_SSL_VERIFYHOST] = $data['ssl_verify_host'];
+			$this->queryOptions[CURLOPT_SSL_VERIFYPEER] = $data['ssl_verify_peer'];
+			$this->queryOptions[CURLOPT_SSL_VERIFYHOST] = $data['ssl_verify_host'];
 			
 			$headers = [];
 			
@@ -344,79 +344,67 @@
 				
 			}
 			
-			if ($headers) $options[CURLOPT_HTTPHEADER] = $headers;
+			$data['headers'] = $headers;
 			
-			if (is_isset ('proxy', $this->options)) {
-				
-				foreach ($this->change_proxy () as $key => $value)
-					$options[$key] = $value;
-				
-			} elseif ($data['proxy'])
-				$options[CURLOPT_PROXY] = prep_file_str ($data['proxy']);
+			if ($headers) $this->queryOptions[CURLOPT_HTTPHEADER] = $headers;
 			
-			//$options[CURLOPT_DNS_SERVERS] = '8.8.8.8';
+			if ($data['proxy'])
+				foreach ($this->change_proxy ($data['proxy']) as $key => $value)
+					$this->queryOptions[$key] = $value;
+			
+			//$this->queryOptions[CURLOPT_DNS_SERVERS] = '8.8.8.8';
 			
 			if ($c_options = $data['cookies']) {
 				
 				if (is_isset ('file_input', $c_options))
-					$options[CURLOPT_COOKIEFILE] = dash_filepath ($c_options['file_input']);
+					$this->queryOptions[CURLOPT_COOKIEFILE] = dash_filepath ($c_options['file_input']);
 				
 				if (is_isset ('file_output', $c_options))
-					$options[CURLOPT_COOKIEJAR] = dash_filepath ($c_options['file_output']);
+					$this->queryOptions[CURLOPT_COOKIEJAR] = dash_filepath ($c_options['file_output']);
 				
 				if (isset ($c_options['text']))
-					$options[CURLOPT_COOKIE] = $c_options['text'];
+					$this->queryOptions[CURLOPT_COOKIE] = $c_options['text'];
 				
 			}
 			
 			if ($a_options = $data['access'])
-			$options[CURLOPT_USERPWD] = $a_options['login'].':'.$a_options['password'];
+			$this->queryOptions[CURLOPT_USERPWD] = $a_options['login'].':'.$a_options['password'];
 			
 			if (is_isset ('encoding', $data))
-			$options[CURLOPT_ENCODING] = $data['encoding'];
-			$options[CURLOPT_VERBOSE] = true;
+			$this->queryOptions[CURLOPT_ENCODING] = $data['encoding'];
+			$this->queryOptions[CURLOPT_VERBOSE] = true;
 			
 			if ($this->safe_mode) {
 				
-				$options[CURLOPT_RETURNTRANSFER] = false;
-				$options[CURLOPT_HEADER] = true;
+				$this->queryOptions[CURLOPT_RETURNTRANSFER] = false;
+				$this->queryOptions[CURLOPT_HEADER] = true;
 				
 			} else {
 				
 				if ($data['follow_location']) {
 					
-					$options[CURLOPT_FOLLOWLOCATION] = true;
+					$this->queryOptions[CURLOPT_FOLLOWLOCATION] = true;
 					
 					if ($data['max_redir_num'])
-					$options[CURLOPT_MAXREDIRS] = $data['max_redir_num'];
+					$this->queryOptions[CURLOPT_MAXREDIRS] = $data['max_redir_num'];
 					
-				} else $options[CURLOPT_FOLLOWLOCATION] = false;
+				} else $this->queryOptions[CURLOPT_FOLLOWLOCATION] = false;
 				
-				$options[CURLOPT_HEADER] = $data['return_headers'];
+				$this->queryOptions[CURLOPT_HEADER] = $data['return_headers'];
 				
-				$options[CURLOPT_RETURNTRANSFER] = true;
+				$this->queryOptions[CURLOPT_RETURNTRANSFER] = true;
 				
 			}
 			
 			if ($this->debug == self::SERVICE_INFO) {
 				
-				$options[CURLOPT_HEADER] = true;
-				$options[CURLOPT_VERBOSE] = true;
+				$this->queryOptions[CURLOPT_HEADER] = true;
+				$this->queryOptions[CURLOPT_VERBOSE] = true;
 				
 				$curl_log = fopen ('php://temp', 'w+');
-				$options[CURLOPT_STDERR] = $curl_log;
+				$this->queryOptions[CURLOPT_STDERR] = $curl_log;
 				
 			}
-			
-			$options[CURLINFO_HEADER_OUT] = true;
-			$options[CURLOPT_SSL_VERIFYPEER] = false;
-			$options[CURLOPT_SSL_VERIFYHOST] = false;
-			
-			foreach ($data['custom_opt'] as $key => $value)
-				$options[$key] = $value;
-			
-			$data['headers'] = $headers;
-			$data['options'] = $options;
 			
 			if (is_isset ($i, $this->user_data) and is_isset ($num, $this->user_data[$i]))
 				$data['user_data'] = $this->user_data[$i][$num];
@@ -427,11 +415,11 @@
 			
 		}
 		
-		function change_proxy () {
+		function change_proxy ($proxies) {
 			
 			$output = [];
 			
-			$proxy = trim ($this->options['proxy'][mt_rand (0, count ($this->options['proxy']) - 1)]);
+			$proxy = trim ($proxies[mt_rand (0, count ($proxies) - 1)]);
 			
 			$parts = explode ('@', $proxy);
 			
@@ -454,7 +442,7 @@
 			
 			$this->handle = curl_init ();
 			
-			foreach ($data['options'] as $key => $value)
+			foreach ($this->queryOptions as $key => $value)
 				curl_setopt ($this->handle, $key, $value);
 			
 			$add_handle = curl_multi_add_handle ($this->multi_handle, $this->handle);
@@ -481,7 +469,7 @@
 				
 				$total = count ($this->query_data[$i]);
 				
-				$streams_num = intval_correct ($this->options['streams_num'], $total);
+				$streams_num = intval_correct ($this->settings['streams_num'], $total);
 				$streams_num = intval_rcorrect ($streams_num, $total);
 				
 				$this->query = [];
@@ -509,13 +497,12 @@
 								$this->item->data['query_action'] ($this);
 							
 							if (
-								isset ($this->options['proxy']) and
-								is_isset (CURLOPT_PROXY, $this->item->data['options']) and
+								$this->item->data['proxy'] and
 								!$this->item->isOK ()
 							) {
 								
-								foreach ($this->change_proxy () as $key => $value)
-									$this->item->data['options'][$key] = $value;
+								foreach ($this->change_proxy ($this->item->data['proxy']) as $key => $value)
+									$this->queryOptions[$key] = $value; // TODO Item
 								
 								$this->make_query ($this->item->data);
 								++$running; // Important!

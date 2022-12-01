@@ -27,7 +27,7 @@
 			$this->handle = $this->curl->info['handle'];
 			$this->handle_info = curl_getinfo ($this->curl->info['handle']);
 			
-			$this->date = new \Date (time (), ['date_adjust' => $this->curl->options['date_adjust']]);
+			$this->date = new \Date (time (), ['date_adjust' => $this->curl->settings['date_adjust']]);
 			
 		}
 		
@@ -113,14 +113,11 @@
 					
 					if ($this->attempt_num <= $this->data['attempts_num']) {
 						
-						if (is_isset ('proxy', $this->curl->options)) {
-							
-							foreach ($this->curl->change_proxy () as $key => $value)
-								$this->data['options'][$key] = $value;
-							
-						}
+						if ($this->data['proxy'])
+							foreach ($this->curl->change_proxy ($this->data['proxy']) as $key => $value)
+								$this->curl->queryOptions[$key] = $value;
 						
-						//$this->data['options'][CURLOPT_TIMEOUT] *= 10;
+						//$this->curl->queryOptions[CURLOPT_TIMEOUT] *= 10;
 						
 						if ($this->curl->debug == \Curl::REPORT_TIMEOUT_ACTION)
 							$this->data['timeout_action'] ($this->curl);
@@ -248,7 +245,7 @@
 						$this->read_info['options'] = [];
 					
 					foreach ($const as $key => $value)
-					foreach ($this->data['options'] as $key2 => $value2)
+					foreach ($this->curl->queryOptions as $key2 => $value2)
 					if ($key2 == $value)
 					$this->read_info['options'][$key] = $value2;
 					
@@ -290,7 +287,7 @@
 			
 			$headers = 'curl -X '.strtoupper ($this->data['method']).' "'.$this->data['url'].'" --compressed';
 			
-			foreach ($this->data['options'][CURLOPT_HTTPHEADER] as $value) {
+			foreach ($this->curl->queryOptions[CURLOPT_HTTPHEADER] as $value) {
 				
 				list ($key, $value) = explode (': ', $value);
 				
@@ -299,8 +296,8 @@
 				
 			}
 			
-			if ($this->data['options'][CURLOPT_COOKIE])
-				$headers .= ' --cookie "'.$this->data['options'][CURLOPT_COOKIE].'"';
+			if ($this->curl->queryOptions[CURLOPT_COOKIE])
+				$headers .= ' --cookie "'.$this->curl->queryOptions[CURLOPT_COOKIE].'"';
 			
 			if ($this->data['referer'])
 				$headers .= ' -H "Referer: '.$this->data['referer'].'"';
