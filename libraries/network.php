@@ -1829,17 +1829,6 @@
 		
 	}
 	
-	function send_code ($code, $version = '1.1') {
-		
-		$mess = http_get_message ($code);
-		
-		if (substr (php_sapi_name (), 0, 3) == 'cgi')
-			@header ('Status: '.$mess);
-		else
-			@header ('HTTP/'.$version.' '.$code.' '.$mess);
-		
-	}
-	
 	function build_url ($start, $finish) {
 		
 		if ($finish[0] == '/') $finish = $start.$finish;

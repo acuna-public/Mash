@@ -314,7 +314,7 @@
 			
 		}
 		
-		function getHeaders () { // TODO
+		function getResponseHeaders () { // TODO
 			
 			$headers = [];
 			
@@ -329,9 +329,9 @@
 					
 					list ($key, $value) = explode (': ', $line);
 					
-					if (in_array ($key, array_keys ($this->headers)))
-						$destr[$key][] = $value;
-					else
+					//if (in_array ($key, array_keys ($this->headers)))
+					//	$destr[$key][] = $value;
+					//else
 						$headers[$key] = $value;
 					
 				}

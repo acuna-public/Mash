@@ -126,6 +126,7 @@
 				'attempts_num' => 30,
 				'success_codes' => [200, 204, 206],
 				'show_error_result' => true,
+				'return_headers' => false,
 				'no_signal' => 1,
 				'output_file' => '',
 				'referer' => '',
@@ -363,7 +364,7 @@
 				if (is_isset ('file_output', $c_options))
 					$options[CURLOPT_COOKIEJAR] = dash_filepath ($c_options['file_output']);
 				
-				if ($c_options['text'])
+				if (isset ($c_options['text']))
 					$options[CURLOPT_COOKIE] = $c_options['text'];
 				
 			}
@@ -373,6 +374,7 @@
 			
 			if (is_isset ('encoding', $data))
 			$options[CURLOPT_ENCODING] = $data['encoding'];
+			$options[CURLOPT_VERBOSE] = true;
 			
 			if ($this->safe_mode) {
 				
@@ -390,6 +392,8 @@
 					
 				} else $options[CURLOPT_FOLLOWLOCATION] = false;
 				
+				$options[CURLOPT_HEADER] = $data['return_headers'];
+				
 				$options[CURLOPT_RETURNTRANSFER] = true;
 				
 			}
@@ -405,6 +409,8 @@
 			}
 			
 			$options[CURLINFO_HEADER_OUT] = true;
+			$options[CURLOPT_SSL_VERIFYPEER] = false;
+			$options[CURLOPT_SSL_VERIFYHOST] = false;
 			
 			foreach ($data['custom_opt'] as $key => $value)
 				$options[$key] = $value;
@@ -533,8 +539,6 @@
 								} else ++$running;
 								
 							}
-							
-							//debug ($this->item->getInfo (['url']));
 							
 							$this->remove_handle ($this->info['handle']);
 							
