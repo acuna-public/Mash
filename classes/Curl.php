@@ -137,7 +137,8 @@
 				'user_agent' => '',
 				'referer' => '',
 				'headers' => [],
-				'proxy' => '',
+				'proxy' => [],
+				'encoding' => '',
 				'cookies' => [],
 				'access' => [],
 				'post_fields' => [],
@@ -370,9 +371,8 @@
 			if ($a_options = $data['access'])
 			$this->queryOptions[CURLOPT_USERPWD] = $a_options['login'].':'.$a_options['password'];
 			
-			if (is_isset ('encoding', $data))
-			$this->queryOptions[CURLOPT_ENCODING] = $data['encoding'];
-			$this->queryOptions[CURLOPT_VERBOSE] = true;
+			if ($data['encoding'])
+				$this->queryOptions[CURLOPT_ENCODING] = $data['encoding'];
 			
 			if ($this->safe_mode) {
 				
