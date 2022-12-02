@@ -248,9 +248,6 @@
 			if ($data['output_file'])
 				$this->queryOptions[CURLOPT_STDERR] = $data['output_file'];
 			
-			if ($data['follow_location'])
-				$this->queryOptions[CURLOPT_AUTOREFERER] = true;
-			
 			switch ($data['method']) {
 				
 				case self::GET:
@@ -384,9 +381,10 @@
 				if ($data['follow_location']) {
 					
 					$this->queryOptions[CURLOPT_FOLLOWLOCATION] = true;
+					$this->queryOptions[CURLOPT_AUTOREFERER] = true;
 					
 					if ($data['max_redir_num'])
-					$this->queryOptions[CURLOPT_MAXREDIRS] = $data['max_redir_num'];
+						$this->queryOptions[CURLOPT_MAXREDIRS] = $data['max_redir_num'];
 					
 				} else $this->queryOptions[CURLOPT_FOLLOWLOCATION] = false;
 				
