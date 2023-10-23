@@ -238,7 +238,7 @@
 		return ($from * 100) / $to;
 	}
 	
-	function pos_round ($number, $precision, $mode = PHP_ROUND_HALF_UP, $max = 10) {
+	function pos_round ($number, $precision = 0, $mode = PHP_ROUND_HALF_UP, $max = 10) {
 		
 		$output = round ($number, $precision, $mode);
 		
@@ -246,10 +246,10 @@
 			
 			$precision++;
 			
-			if ($precision > $max)
-				break;
-			else
+			if ($precision <= $max)
 				$output = round ($number, $precision, $mode);
+			else
+				break;
 			
 		}
 		
