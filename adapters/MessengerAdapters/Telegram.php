@@ -4,11 +4,7 @@
 	
 	class Telegram extends \Messenger {
 		
-		protected $token;
-		
-		function __construct ($token) {
-			$this->token = $token;
-		}
+		public $token;
 		
 		function getTitle () {
 			return 'Telegram';

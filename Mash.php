@@ -7,6 +7,8 @@
 	@ini_set ('html_errors', true);
 	@ini_set ('error_reporting', E_ALL);*/
 	
+	session_start ();
+	
 	define ('MASH', true);
 	define ('MASH_DIR', dirname (__FILE__));
 	define ('MASH_CACHE_DIR', MASH_DIR.'/cache');
@@ -27,10 +29,8 @@
 		
 		function __construct () {
 			
-			if (!isset ($_SESSION)) @session_start ();
-			
-			@ob_start ();
-			@ob_implicit_flush (0);
+			ob_start ();
+			ob_implicit_flush (0);
 			
 			$this->isConstruct = true;
 			
@@ -69,7 +69,7 @@
 				@ini_set ('error_reporting', $this->errorsReportType);
 				
 				if (!defined ('MASH_DISPLAY_ERRORS'))
-				define ('MASH_DISPLAY_ERRORS', true);
+					define ('MASH_DISPLAY_ERRORS', true);
 				
 				require $this->loadMashFile (['libraries', 'debug']);
 				require $this->loadMashFile (['libraries', 'filesystem']);

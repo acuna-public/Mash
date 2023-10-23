@@ -229,7 +229,7 @@
 				
 				if (!is_isset ('force', $options)) {
 					
-					$this->date = new self ();
+					$this->date = new self();
 					$date = $this->date->show ('Ymd');
 					
 					/*if (!$date_null and $date == $date) { // Сегодня

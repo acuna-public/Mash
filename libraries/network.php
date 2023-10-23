@@ -646,7 +646,7 @@
 		$url = implode ('.', $url);
 		$php_self_2 = '';
 		
-		//$php_self = explode ('/', $_SERVER['PHP_SELF']);
+		//$php_self= explode ('/', $_SERVER['PHP_SELF']);
 		//if (count ($php_self) > 2) $php_self_2 = '/'.$php_self[1];
 		
 		if ($sсheme) $sсheme = get_http_scheme ().':'; else $sсheme = '';

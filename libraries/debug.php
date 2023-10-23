@@ -141,6 +141,10 @@
 	if (!defined ('LISAS_FRAMEWORK_DEBUG_STYLE'))
 	define ('LISAS_FRAMEWORK_DEBUG_STYLE', 'color:red;');
 	
+	function debug_time ($mess = '', $file = '') {
+		debug ($mess.' ('.work_time (2).')', $file);
+	}
+	
 	function debug ($mess = '', $file = '') {
 		global $_ARG;
 		

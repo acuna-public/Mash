@@ -237,3 +237,22 @@
 	function prop ($from, $to, $delim = 100) {
 		return ($from * 100) / $to;
 	}
+	
+	function pos_round ($number, $precision, $mode = PHP_ROUND_HALF_UP, $max = 10) {
+		
+		$output = round ($number, $precision, $mode);
+		
+		while ($output == 0) {
+			
+			$precision++;
+			
+			if ($precision > $max)
+				break;
+			else
+				$output = round ($number, $precision, $mode);
+			
+		}
+		
+		return $output;
+		
+	}

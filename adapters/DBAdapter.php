@@ -1290,8 +1290,6 @@ LIMIT '.$limit;
 					
 				}
 				
-				$i++;
-				
 			}
 			
 			return $output;
@@ -1875,7 +1873,7 @@ UNION
 			
 		];
 		
-		function convert (string $content, \DB\Provider $from): string {
+		function convert (string $content, \DB\Adapter $from): string {
 			return $content;
 		}
 		

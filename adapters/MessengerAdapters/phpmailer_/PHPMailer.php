@@ -2452,8 +2452,7 @@ class PHPMailer
 						$result .= $this->addrAppend('Reply-To', $this->ReplyTo);
 				}
 
-				// mail() sets the subject itself
-				if ('mail' !== $this->Mailer) {
+				// mail() sets the subject itselfif ('mail' !== $this->Mailer) {
 						$result .= $this->headerLine('Subject', $this->encodeHeader($this->secureHeader($this->Subject)));
 				}
 
@@ -2981,7 +2980,7 @@ class PHPMailer
 		 * Never use a user-supplied path to a file!
 		 * Returns false if the file could not be found or read.
 		 * Explicitly *does not* support passing URLs; PHPMailer is not an HTTP client.
-		 * If you need to do that, fetch the resource yourself and pass it in via a local file or string.
+		 * If you need to do that, fetch the resource yourselfand pass it in via a local file or string.
 		 *
 		 * @param string $path				Path to the attachment
 		 * @param string $name				Overrides the attachment name

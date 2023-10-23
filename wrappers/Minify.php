@@ -26,7 +26,9 @@
 			
 		protected $files = [], $locale;
 		
-		protected abstract function getArea ();
+		protected function getArea () {
+			return '';
+		}
 		
 		function onInit () {
 			
@@ -286,6 +288,15 @@
 			
 		}
 		
+		private function css () {
+			
+			$options = ['allow_types' => 'css', 'files_only' => 1];
+			
+			foreach (dir_scan ($this->getRootDir ().DS.'css', $options) as $file)
+				if (file_exists ($file)) $this->files[] = $file;
+			
+		}
+		
 		protected function cssSystemDirs (): array {
 			return ['bootstrap-oldify', 'mash', 'mash-sizes', 'mash-colors', 'mash-media'];
 		}
@@ -320,8 +331,10 @@
 				
 				if ($this->getArea () == 'system')
 					$this->cssSystem ();
-				else
+				elseif ($this->getArea () == 'templ')
 					$this->cssTemplate ();
+				else
+					$this->css ();
 				
 				if ($this->show_out) print_r ($this->files);
 				

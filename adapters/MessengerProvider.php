@@ -18,7 +18,7 @@
 		protected function load ($data, $content) {}
 		abstract function _send (array $data);
 		
-		function __construct ($config) {
+		function __construct ($config = []) {
 			$this->config = $config;
 		}
 		

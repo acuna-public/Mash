@@ -130,7 +130,7 @@ CREATE DOMAIN '.$type.' AS VARCHAR CONSTRAINT '.$this->addquotes ('con_byte').' 
 			
 		}
 		
-		function convert (string $content, \DB\Provider $from): string {
+		function convert (string $content, \DB\Adapter $from): string {
 			
 			$output = '';
 			
@@ -334,7 +334,7 @@ CREATE DOMAIN '.$this->addquotes ($name).' AS smallint CHECK (VALUE >= -'.str_re
 			
 		}
 		
-		function convert2 (string $content, \DB\Provider $from): string {
+		function convert2 (string $content, \DB\Adapter $from): string {
 			
 			$output = '';
 			$types_val = [];
@@ -521,9 +521,9 @@ CREATE DOMAIN '.$this->addquotes ($name).' AS smallint CHECK (VALUE >= -'.str_re
 			
 			if (is_isset ('type', $options)) {
 				
-				if ($options['type'] == \DB\Provider::INSERT and $options['return_col'])
+				if ($options['type'] == self::INSERT and $options['return_col'])
 					$query .= ' RETURNING '.$this->addquotes ($options['return_col']);
-				elseif ($options['type'] == \DB\Provider::TRUNCATE)
+				elseif ($options['type'] == self::TRUNCATE)
 					$query .= ' RESTART IDENTITY';
 				
 			}

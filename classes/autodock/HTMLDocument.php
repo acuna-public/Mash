@@ -86,6 +86,7 @@
 				'parent + child' => '//child/following::parent', // TODO
 				'elem1, elem2' => '//elem1 | //elem2',
 				'.class' => '//*[contains (concat (\' \', normalize-space (@class), \' \'), \' class \')]',
+				'.class.class' => '//*[contains (concat (\' \', normalize-space (@class), \' \'), \' class \') and contains (concat (\' \', normalize-space (@class), \' \'), \' class \')]',
 				'#id' => '//*[@id=\'id\']',
 				'[attr]' => '//*[@attr]',
 				'[attr1][attr2]' => '//*[@attr1 and @attr2]',
@@ -237,8 +238,9 @@
 						if ($match['id'][$i])
 							$brackets[] = '@id=\''.$match['id'][$i].'\'';
 						
-						$bracket = '';
 						$i3 = 0;
+						$bracket = '';
+						
 						$attr = trim ($match['attr'][$i2]);
 						
 						if ($rel != '>') {
@@ -273,9 +275,20 @@
 						
 						if ($bracket) $brackets[] = $bracket;
 						
-						if ($match['class'][$i])
-							foreach (explode ('.', $match['class'][$i]) as $class) // .class1.class2
-								$brackets[] = 'contains (concat (\' \', normalize-space (@class), \' \'), \' '.$class.' \')';
+						$bracket = '';
+						
+						if ($match['class'][$i]) {
+							
+							foreach (explode ('.', $match['class'][$i]) as $i2 => $class) { // .class1.class2
+								
+								if ($i2 > 0) $bracket .= ' and ';
+								$bracket .= 'contains (concat (\' \', normalize-space (@class), \' \'), \' '.$class.' \')';
+								
+							}
+							
+							$brackets[] = $bracket;
+							
+						}
 						
 						if ($pseudo = $match['pseudo'][$i]) {
 							
@@ -366,7 +379,7 @@
 				
 				if ($offset >= 0) { // Конкретный элемент
 					
-					$node = new self ($nodes->item ($offset));
+					$node = new self($nodes->item ($offset));
 					return $node->setNode ();
 					
 				} else { // Все элементы сразу
@@ -375,7 +388,7 @@
 					
 					foreach ($nodes as $node) {
 						
-						$node = new self ($node);
+						$node = new self($node);
 						$elements[] = $node->setNode ();
 						
 					}
@@ -455,7 +468,7 @@
 				
 				foreach ($this->dom->childNodes as $i => $child) {
 					
-					$node = new self ($child);
+					$node = new self($child);
 					
 					if ($offset >= 0) {
 						
@@ -513,7 +526,7 @@
 			
 			if ($selector) {
 				
-				$elem = new self ($this->dom);
+				$elem = new self($this->dom);
 				$elem->dom = $elem->getDom ($elem->dom);
 				
 				$xpath = new DOMXpath ($elem->dom);
@@ -539,7 +552,7 @@
 				//print_r ($elem->innerHtml ());
 			}// else $this->dom->parentNode->removeChild ($this->dom);
 			
-			$elem = new self ($elem->dom);
+			$elem = new self($elem->dom);
 			
 			return $elem->setNode ();
 			
