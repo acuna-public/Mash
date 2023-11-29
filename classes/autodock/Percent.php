@@ -11,29 +11,46 @@
 		}
 		
 		function valueOf ($percent) {
-			return ($this->value * $percent) / $this->delim;
-		}
-		
-		function getDiff ($b) {
 			
-			if ($this->value > $b)
-				return (($this->value - $b) * $this->delim) / $b;
-			elseif ($this->value < $b)
-				return (($b - $this->value) * $this->delim) / $this->value;
+			if ($this->delim != 0)
+				return ($this->value * $percent) / $this->delim;
 			else
-				return 0;
+				throw new \Exception ('Division by zero');
 			
 		}
 		
-		function getTimes ($b) {
+		function getDiff ($value) {
 			
-			if ($this->value > $b)
-				return ($this->value / $b);
-			elseif ($this->value < $b)
-				return ($b / $this->value);
-			else
-				return 0;
+			$percent = new self ($value - $this->value);
 			
+			$percent->delim = $value;
+			
+			return $percent->valueOf (100);
+			
+		}
+		
+		function getDiff2 ($value) {
+			return ($value / $this->value) * $this->delim;
+		}
+		
+		function getTimes ($value) {
+			return ($value / $this->value);
+		}
+		
+		function plus ($percent) {
+			return ($this->value * (1 + ($percent / $this->delim)));
+		}
+		
+		function minus ($percent) {
+			return ($this->value * (1 - ($percent / $this->delim)));
+		}
+		
+		function getUpward ($value) {
+			return (($this->value / $value) * $this->delim - $this->delim);
+		}
+		
+		function getLesser ($value) {
+			return ($this->delim - ($value / $this->value) * $this->delim);
 		}
 		
 	}

@@ -117,7 +117,7 @@
 			return mysqli_fetch_field ($query_id);
 		}
 		
-		function safesql ($source) {if (is_array ($source)) throw new \Exception2 ($source);
+		function safesql ($source) {
 			return mysqli_real_escape_string ($this->db_id, $source);
 		}
 		

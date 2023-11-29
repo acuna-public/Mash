@@ -116,10 +116,7 @@
 	}
 	
 	function _timer_init () { // Инициализирует таймер для измерения времени работы скрипта
-		
-		list ($sec, $m_sec) = explode (' ', microtime ());
-		return ((float) $m_sec + (float) $sec);
-		
+		return microtime (true);
 	}
 	
 	function timer_stop ($time_start, $file = '') { // Останавливает таймер и выводит время работы скрипта, полученное из timer_start ().
