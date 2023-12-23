@@ -11,12 +11,7 @@
 		}
 		
 		function valueOf ($percent) {
-			
-			if ($this->delim != 0)
-				return ($this->value * $percent) / $this->delim;
-			else
-				throw new \Exception ('Division by zero');
-			
+			return ($this->value * $percent) / $this->delim;
 		}
 		
 		function getDiff ($value) {
