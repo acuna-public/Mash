@@ -28,22 +28,40 @@
 				
 			]);
 			
-			foreach ($this->setLibraries ([]) as $library) {
+			foreach ($this->setLibraries ([]) as $library)
+			foreach ($library as $library => $dirs) {
 				
-				list ($author, $name, $ver) = $library;
+				list ($author, $name, $ver) = $dirs;
 				
 				$path = [__DIR__, '..', $this->config['libraries_dir'], $author, $name, $ver];
 				
 				foreach ($this->mash->scanCurrentDir ($path) as $file)
 					require $file;
 				
-				$path[] = 'autodock';
-				
-				foreach ($this->mash->scanCurrentDir ($path, true) as $file)
-					require $file;
+				foreach ($this->getLibrariesDirs ()[$library] as $dir) {
 					
+					$path2 = $path;
+					$path2[] = $dir;
+					
+					$dir = implode (DS, $path2);
+					
+					foreach ($this->mash->scanCurrentDir ($dir, true) as $file)
+						require $file;
+					
+				}
+				
+				$path2 = $path;
+				$path2[] = 'autodock';
+				
+				foreach ($this->mash->scanCurrentDir ($path2, true) as $file)
+					require $file;
+				
 			}
 			
+		}
+		
+		protected function getLibrariesDirs () {
+			return [];
 		}
 		
 		final function loadDir ($dir) {

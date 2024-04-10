@@ -171,7 +171,7 @@
 	function parse_debug_mess ($mess) {
 		
 		$mess = lisas_nl2br ($mess, 0);
-		$mess = str_replace (["\t", '<br/>'.NL, '	'], ['&nbsp;&nbsp;&nbsp;', '<br/>'.NL, '&nbsp;&nbsp;&nbsp;'], $mess);
+		$mess = str_replace (["\t", '<br/>'.NL, '	'], ['&nbsp;&nbsp;&nbsp;', '<br/>'.NL, '&nbsp;&nbsp;&nbsp;'], w3c_encode ($mess));
 		
 		return $mess;
 		

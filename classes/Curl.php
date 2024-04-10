@@ -64,6 +64,9 @@
 		
 	*/
 	
+	require 'CurlItem.php';
+	require 'CurlException.php';
+	
 	class Curl {
 		
 		const GET = 'get', POST = 'post', PUT = 'put', PATCH = 'patch', DELETE = 'delete', HEAD = 'head';
@@ -108,9 +111,6 @@
 		
 		function __construct () {
 			
-			require_once 'CurlItem.php';
-			require_once 'CurlException.php';
-			
 			$this->safe_mode = @ini_get ('safe_mode');
 			$this->curl_version = curl_version ();
 			
@@ -137,7 +137,8 @@
 				'user_agent' => '',
 				'referer' => '',
 				'headers' => [],
-				'proxy' => [],
+				'proxies' => [],
+				'proxy' => '',
 				'encoding' => '',
 				'cookies' => [],
 				'access' => [],
@@ -224,7 +225,7 @@
 				$data[$key] = $value;
 			
 			if (!$data['user_agent'])
-				$data['user_agent'] = get_useragent (1);
+				$data['user_agent'] = get_useragent (true);
 			
 			$this->queryOptions[CURLOPT_USERAGENT] = $data['user_agent'];
 			
@@ -346,9 +347,15 @@
 			
 			if ($headers) $this->queryOptions[CURLOPT_HTTPHEADER] = $headers;
 			
+			if ($data['proxies'])
+				$data['proxy'] = self::getProxy ($data['proxies']);
+			
 			if ($data['proxy'])
-				foreach ($this->change_proxy ($data['proxy']) as $key => $value)
+				foreach (self::changeProxy ($data['proxy']) as $key => $value)
 					$this->queryOptions[$key] = $value;
+			
+			//if (!isset ($this->queryOptions[CURLOPT_PROXY]))
+			//	throw new \Ex ();
 			
 			//$this->queryOptions[CURLOPT_DNS_SERVERS] = '8.8.8.8';
 			
@@ -366,10 +373,12 @@
 			}
 			
 			if ($a_options = $data['access'])
-			$this->queryOptions[CURLOPT_USERPWD] = $a_options['login'].':'.$a_options['password'];
+				$this->queryOptions[CURLOPT_USERPWD] = $a_options['login'].':'.$a_options['password'];
 			
 			if ($data['encoding'])
 				$this->queryOptions[CURLOPT_ENCODING] = $data['encoding'];
+			
+			$this->queryOptions[CURLOPT_FORBID_REUSE] = 1;
 			
 			if ($this->safe_mode) {
 				
@@ -413,11 +422,18 @@
 			
 		}
 		
-		function change_proxy ($proxies) {
+		static function getProxy (array $proxies) {
+			
+			if ($proxies)
+				return trim ($proxies[mt_rand (0, count ($proxies) - 1)]);
+			else
+				return null;
+			
+		}
+		
+		static function changeProxy ($proxy) {
 			
 			$output = [];
-			
-			$proxy = trim ($proxies[mt_rand (0, count ($proxies) - 1)]);
 			
 			$parts = explode ('@', $proxy);
 			
@@ -434,7 +450,7 @@
 			
 		}
 		
-		function make_query ($data, $debug = 0) {
+		function make_query ($i, $i2, $data, $debug = 0) {
 			
 			++$this->queryNum;
 			
@@ -446,7 +462,7 @@
 			$add_handle = curl_multi_add_handle ($this->multi_handle, $this->handle);
 			
 			if ($add_handle != CURLM_OK)
-				throw new CurlFatalException (curl_multi_strerror ($add_handle));
+				throw new CurlFatalException (curl_multi_strerror ($add_handle), curl_multi_errno ($add_handle), $this->getUserData ($i)[$i2]);
 			
 			$this->query[(int) $this->handle] = $data;
 			
@@ -473,7 +489,7 @@
 				$this->query = [];
 				
 				for ($i2 = 0; $i2 < $streams_num; ++$i2) // Добавляем указатели только разрешенного количества запросов
-					$this->make_query ($this->query ($i, $i2));
+					$this->make_query ($i, $i2, $this->query ($i, $i2));
 				
 				do { // Выполняем запросы
 					
@@ -499,22 +515,22 @@
 								!$this->item->isOK ()
 							) {
 								
-								foreach ($this->change_proxy ($this->item->data['proxy']) as $key => $value)
+								foreach (self::changeProxy ($this->item->data['proxy']) as $key => $value)
 									$this->queryOptions[$key] = $value; // TODO Item
 								
-								$this->make_query ($this->item->data);
+								$this->make_query ($i, $i2, $this->item->data);
 								++$running; // Important!
 								
 							} else {
 								
 								if ($i2 < $total) {
 									
-									$this->make_query ($this->query ($i, $i2)); // Продожаем делать запросы дальше
+									$this->make_query ($i, $i2, $this->query ($i, $i2)); // Продожаем делать запросы дальше
 									++$i2;
 									
 								}
 								
-								if ($this->item->check_handle ()) {
+								if ($this->item->check_handle ($i, $i2)) {
 									
 									if ($callback)
 										$callback ($this->item);
@@ -573,8 +589,7 @@
 			
 			$data['method'] = self::GET;
 			
-			$this->setData ($data);
-			return $this->process ()[0];
+			return $this->setData ($data)->process ()[0];
 			
 		}
 		

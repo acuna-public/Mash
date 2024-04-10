@@ -29,7 +29,6 @@
 			
 			$this->curl = new \Curl ();
 			
-			$this->curl->setOptions (['proxy' => $this->proxies]);
 			//$this->curl->setReportType (\Curl::REPORT_TIMEOUT_ACTION);
 			
 			$this->db_config = array_extend ($this->db_config, [

@@ -48,4 +48,8 @@
 			return ($this->delim - ($value / $this->value) * $this->delim);
 		}
 		
+		function max ($value) {
+			return $this->value * ($this->delim / $value);
+		}
+		
 	}

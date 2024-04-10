@@ -948,7 +948,12 @@
 	
 	function _dir_scan_name ($file, $options, $debug) {
 		
-		if ($options['unicode']) $file = to_unicode ($file, 'cp1251');
+		if ($options['unicode'])
+			$file = to_unicode ($file, 'cp1251');
+		
+		if (!$options['ext'])
+			$file = pathinfo ($file, PATHINFO_FILENAME);
+		
 		return $file;
 		
 	}
@@ -1059,9 +1064,10 @@
 			'files_only' => true,
 			'dirs_only' => false,
 			'names_only' => false,
+			'ext' => true,
 			'canonical_path' => false,
 			'recursive' => false,
-			'unicode' => true,
+			'unicode' => false,
 			
 			'allow_dirs' => [],
 			'deny_dirs' => [],

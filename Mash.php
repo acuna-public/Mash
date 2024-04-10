@@ -27,6 +27,9 @@
 		
 		protected $dirs = [], $files = [], $params = [], $isInit = false, $isConstruct = false;
 		
+		const
+			VERSION = '1.5.0';
+		
 		function __construct () {
 			
 			ob_start ();

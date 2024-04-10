@@ -698,8 +698,9 @@ creates
 		
 		$flags |= JSON_UNESCAPED_UNICODE;
 		$flags |= JSON_UNESCAPED_SLASHES;
-		$flags |= JSON_THROW_ON_ERROR;
 		$flags |= JSON_UNESCAPED_LINE_TERMINATORS;
+		
+		$flags |= JSON_THROW_ON_ERROR;
 		
 		return json_encode ($str, $flags, $depth);
 		

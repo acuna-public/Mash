@@ -5,7 +5,9 @@
 		public $item;
 		private $type, $url;
 		
-		function __construct ($type, $item = null) {
+		function __construct ($type, $item = null, $code = 0) {
+			
+			parent::__construct ($type, $code);
 			
 			$this->type = $type;
 			$this->item = $item;
@@ -50,8 +52,14 @@
 	
 	class CurlFatalException extends DomainException {
 		
-		function __construct ($message) {
-			$this->message = $message;
+		public $data;
+		
+		function __construct (string $mess, $code, array $data = []) {
+			
+			parent::__construct ($mess, $code);
+			
+			$this->data = $data;
+			
 		}
 		
 	}

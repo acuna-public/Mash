@@ -103,7 +103,7 @@
 			
 		}
 		
-		function check_handle () {
+		function check_handle ($i, $i2) {
 			
 			if (in_array ($this->handle_info['http_code'], $this->attempts_codes) and $this->data['method'] != \Curl::HEAD) {
 				
@@ -113,8 +113,11 @@
 					
 					if ($this->attempt_num <= $this->data['attempts_num']) {
 						
+						if ($this->data['proxies'])
+							$this->data['proxy'] = \Curl::getProxy ($this->data['proxies']);
+						
 						if ($this->data['proxy'])
-							foreach ($this->curl->change_proxy ($this->data['proxy']) as $key => $value)
+							foreach (\Curl::changeProxy ($this->data['proxy']) as $key => $value)
 								$this->curl->queryOptions[$key] = $value;
 						
 						//$this->curl->queryOptions[CURLOPT_TIMEOUT] *= 10;
@@ -129,7 +132,7 @@
 							
 						}
 						
-						$this->curl->make_query ($this->data); // ... и пробуем снова
+						$this->curl->make_query ($i, $i2, $this->data); // ... и пробуем снова
 						
 						return false;
 						

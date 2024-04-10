@@ -2,10 +2,10 @@
 	
 	class File {
 		
-		private $fp;
-		public $file, $size;
+		protected $fp;
+		public $file, $size = 0;
 		
-		private const READ = 'rb', WRITE = 'ab', REWRITE = 'wb', ADD = 'w+b';
+		protected const READ = 'rb', APPEND = 'ab', WRITE = 'wb';
 		
 		function __construct ($file) {
 			
@@ -16,11 +16,8 @@
 			
 		}
 		
-		private function open ($mode) {
-			
-			if (!$this->fp)
-				$this->fp = fopen ($this->file, $mode);
-			
+		protected function open ($mode) {
+			$this->fp = fopen ($this->file, $mode);
 		}
 		
 		function read (): string {
@@ -30,50 +27,85 @@
 			
 		}
 		
+		function clean () {
+			$this->open (self::WRITE);
+		}
+		
 		function write ($content) {
 			
-			$this->open (self::WRITE);
+			//if (!$this->fp)
+				$this->open (self::WRITE);
+			
 			return fwrite ($this->fp, $content);
 			
 		}
 		
-		function rewrite ($content) {
+		function append ($content) {
 			
-			$this->open (self::REWRITE);
+			//if (!$this->fp)
+				$this->open (self::APPEND);
+			
 			return fwrite ($this->fp, $content);
 			
 		}
 		
-		function add ($content) {
-			
-			$this->open (self::ADD);
-			return fwrite ($this->fp, $content);
-			
-		}
+		public $charIndex = 0;
+		public $stringIndex = 0;
 		
-		function char ($offset): string {
+		function getChar ($offset = -1): string {
 			
-			$this->open (self::READ);
+			if (!$this->fp)
+				$this->open (self::READ);
+			
+			if ($offset == -1)
+				$offset = $this->charIndex;
 			
 			fseek ($this->fp, $offset);
+			
+			$this->charIndex++;
+			
 			return fgetc ($this->fp);
 			
 		}
 		
-		function fgets () {
+		function getChars () {
 			
-			$this->open (self::READ);
+			if (!$this->fp)
+				$this->open (self::READ);
+			
+			return !feof ($this->fp);
+			
+		}
+		
+		function getString () {
+			
+			if (!$this->fp)
+				$this->open (self::READ);
+			
+			$this->stringIndex++;
 			
 			return fgets ($this->fp);
 			
 		}
 		
 		function __destruct () {
+			$this->close ();
+		}
+		
+		function close () {
 			if ($this->fp) fclose ($this->fp);
 		}
 		
+		function exists () {
+			return file_exists ($this->file);
+		}
+		
+		function delete () {
+			unlink ($this->file);
+		}
+		
 		function __toString () {
-			return realpath ($this->file);
+			return $this->file;
 		}
 		
 	}
