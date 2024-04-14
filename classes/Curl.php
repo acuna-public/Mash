@@ -81,7 +81,7 @@
 			$item, $info,
 			$user_data = [],
 			$query_options = [],
-			$nocustom_types,
+			$nocustom_types = [self::GET, self::POST],
 			$deny_headers = ['Content-Length', 'Expect'],
 			$timeout_errors = ['Operation timed out', 'Connection timed out'],
 			$proxy_num = 0,
@@ -115,8 +115,6 @@
 			$this->curl_version = curl_version ();
 			
 			$this->multi_handle = curl_multi_init ();
-			
-			$this->nocustom_types = [self::GET, self::POST, self::PUT];
 			
 			$this->def_options = [
 				
@@ -264,28 +262,6 @@
 						
 					}
 					
-					if ($data['post_fields']) {
-						
-						if (isset ($data['data_type']) and $data['data_type'] == 'json') {
-							
-							$data['post_fields'] = array2json ($data['post_fields']);
-							
-							$data['headers']['Content-Type'] = 'application/json';
-							//$data['headers']['Content-Length'] = strlen ($data['post_fields']);
-							
-						} else {
-							
-							if ($data['encode_http_params'] == 3)
-								$data['post_fields'] = http_build_query ($data['post_fields']);
-							else
-								$data['post_fields'] = http_build_fquery ($data['post_fields'], $data['encode_http_params']);
-							
-						}
-						
-						$this->queryOptions[CURLOPT_POSTFIELDS] = $data['post_fields'];
-						
-					}
-					
 					$this->queryOptions[CURLOPT_POST] = true;
 					
 					break;
@@ -296,12 +272,12 @@
 					
 					$this->queryOptions[CURLOPT_PUT] = true;
 					
-					if ($data['file'])
+					if (isset ($data['file']))
 						$this->queryOptions[CURLOPT_FILE] = $data['file'];
-					elseif ($data['in_file'])
+					elseif (isset ($data['in_file']))
 						$this->queryOptions[CURLOPT_INFILE] = $data['in_file'];
 					
-					if ($data['in_file_size'])
+					if (isset ($data['in_file_size']))
 						$this->queryOptions[CURLOPT_INFILESIZE] = $data['in_file_size'];
 					
 					break;
@@ -311,11 +287,34 @@
 				case self::HEAD: {
 					
 					$this->queryOptions[CURLOPT_NOBODY] = true;
-					//$this->queryOptions[CURLOPT_HTTP_VERSION] = CURL_HTTP_VERSION_1_1;
 					
 					break;
 					
 				}
+				
+			}
+			
+			//$this->queryOptions[CURLOPT_HTTP_VERSION] = CURL_HTTP_VERSION_1_1;
+			
+			if ($data['post_fields']) {
+				
+				if (isset ($data['data_type']) and $data['data_type'] == 'json') {
+					
+					$data['post_fields'] = array2json ($data['post_fields']);
+					
+					$data['headers']['Content-Type'] = 'application/json';
+					$data['headers']['Content-Length'] = strlen ($data['post_fields']);
+					
+				} else {
+					
+					if ($data['encode_http_params'] == 3)
+						$data['post_fields'] = http_build_query ($data['post_fields']);
+					else
+						$data['post_fields'] = http_build_fquery ($data['post_fields'], $data['encode_http_params']);
+					
+				}
+				
+				$this->queryOptions[CURLOPT_POSTFIELDS] = $data['post_fields'];
 				
 			}
 			

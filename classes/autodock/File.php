@@ -104,8 +104,20 @@
 			unlink ($this->file);
 		}
 		
+		function size () {
+			return $this->size;
+		}
+		
+		function rename ($to) {
+			rename ($this->file, $to);
+		}
+		
 		function __toString () {
 			return $this->file;
+		}
+		
+		function pathinfo () {
+			return pathinfo ($this->file);
 		}
 		
 	}
