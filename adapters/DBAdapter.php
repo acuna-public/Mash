@@ -937,8 +937,8 @@ LIMIT '.$limit;
 					if (count ($value) >= 2)
 						$output = $this->_prep_items2 ($key, $value[1], $value[0]);
 					else
-					foreach ($value as $key2 => $value2)
-						$output = $this->_prep_items2 ($key, $value2, $key2);
+						foreach ($value as $key2 => $value2)
+							$output = $this->_prep_items2 ($key, $value2, $key2);
 					
 				} else $output = $this->_prep_items2 ($key, $value);
 				
