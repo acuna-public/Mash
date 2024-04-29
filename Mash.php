@@ -81,7 +81,6 @@
 				define ('LOG_WARNINGS', true);
 				
 				require $this->loadMashFile (['Adapter']);
-				require $this->loadMashFile (['classes', 'Tokenizer']);
 				
 				$this->addFile (['libraries', 'arrays'])
 						 ->addFile (['libraries', 'system'])
@@ -94,7 +93,8 @@
 						 ->addFile (['libraries', 'outputs'])
 						 ->addFile (['libraries', 'security'])
 						 ->addFile (['libraries', 'uncli'])
-						 ->addFolder (MASH_DIR.'/classes/autodock', true)
+						 ->addFolder (MASH_DIR.'/classes/autodock/preload')
+						 ->addFolder (MASH_DIR.'/classes/autodock')
 						 ->addFolder (MASH_DIR.'/classes/Streams');
 				
 				require $this->loadMashFile (['libraries', 'errors']);

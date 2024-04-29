@@ -3,16 +3,13 @@
 	class File {
 		
 		protected $fp;
-		public $file, $size = 0;
+		public $file;
 		
 		protected const READ = 'rb', APPEND = 'ab', WRITE = 'wb';
 		
 		function __construct ($file) {
 			
 			$this->file = $file;
-			
-			if (file_exists ($this->file))
-				$this->size = filesize ($this->file);
 			
 		}
 		
@@ -23,7 +20,7 @@
 		function read (): string {
 			
 			$this->open (self::READ);
-			return fread ($this->fp, $this->size);
+			return fread ($this->fp, $this->size ());
 			
 		}
 		
@@ -105,7 +102,7 @@
 		}
 		
 		function size () {
-			return $this->size;
+			return ($this->exists () ? filesize ($this->file) : 0);
 		}
 		
 		function rename ($to) {
