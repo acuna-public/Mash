@@ -150,19 +150,19 @@
 		
 		if (!$_ARG and !defined ('EMBEDED') and !defined ('CLI')) {
 			
-			flush ();
-			ob_flush ();
-			
 			//if ($file) $mess .= ' in '.$file;
 			echo '<span class="debug-mess">// '.$mess.'</span><br/>
 ';
 			
-		} else {
-			
 			flush ();
 			ob_flush ();
 			
+		} else {
+			
 			echo '-- '.$mess.NL;
+			
+			flush ();
+			ob_flush ();
 			
 		}
 		
