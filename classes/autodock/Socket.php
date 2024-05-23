@@ -1,6 +1,6 @@
 <?php
 	
-	class WebSocket {
+	class Socket {
 		
 		public string $url = '';
 		public int $port = 443;
@@ -9,7 +9,7 @@
 		
 		public $sock;
 		
-		function connect ($path): WebSocket {
+		function connect ($path): Socket {
 			
 			$this->sock = fsockopen ('tls://'.$this->url, $this->port, $error, $errnum, 30);
 			
@@ -24,9 +24,9 @@
 					'Host' => $this->url.':'.$this->port,
 					'Accept' => '*/*',
 					'Connection' => 'Upgrade',
-					'Upgrade' => 'websocket',
-					'Sec-WebSocket-Key' => 'x3JJHMbDL1EzLkh9GBhXDw==',
-					'Sec-WebSocket-Version' => 13,
+					'Upgrade' => 'Socket',
+					'Sec-Socket-Key' => 'x3JJHMbDL1EzLkh9GBhXDw==',
+					'Sec-Socket-Version' => 13,
 					
 				];
 				

@@ -283,8 +283,11 @@
 			return (time () + $this->data['date_adjust']);
 		}
 		
-		function date () {
-			return date ($this->dateFormat, $this->time ());
+		function date ($date = 0) {
+			
+			if (!$date) $date = $this->time ();
+			return date ($this->dateFormat, $date);
+			
 		}
 		
 		protected $dbAdapters = [];

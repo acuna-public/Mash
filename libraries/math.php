@@ -1,7 +1,7 @@
 <?php
 /*
  ========================================
- Mash Framework (c) 2010-2017
+ Mash Framework (c) 2010-2017, 2023
  ----------------------------------------
  https://mash.ointeractive.ru/
  ========================================
@@ -242,14 +242,18 @@
 		
 		$output = round ($number, $precision, $mode);
 		
-		while ($output == 0) {
+		if ($output != 0) {
 			
-			$precision++;
-			
-			if ($precision <= $max)
-				$output = round ($number, $precision, $mode);
-			else
-				break;
+			while ($output == 0) {
+				
+				$precision++;
+				
+				if ($precision <= $max)
+					$output = round ($number, $precision, $mode);
+				else
+					break;
+				
+			}
 			
 		}
 		

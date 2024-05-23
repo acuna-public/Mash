@@ -33,6 +33,15 @@
 			//if (!$this->fp)
 				$this->open (self::WRITE);
 			
+			return $this->_write ($content);
+			
+		}
+		
+		protected function _write ($content) {
+			
+			if (is_array ($content))
+				$content = array2json ($content, JSON_PRETTY_PRINT);
+			
 			return fwrite ($this->fp, $content);
 			
 		}
@@ -42,7 +51,7 @@
 			//if (!$this->fp)
 				$this->open (self::APPEND);
 			
-			return fwrite ($this->fp, $content);
+			return $this->_write ($content);
 			
 		}
 		
@@ -65,12 +74,21 @@
 			
 		}
 		
+		function isEOF () {
+			
+			if (!$this->fp)
+				$this->open (self::READ);
+			
+			return feof ($this->fp);
+			
+		}
+		
 		function getChars () {
 			
 			if (!$this->fp)
 				$this->open (self::READ);
 			
-			return !feof ($this->fp);
+			return !$this->isEOF ();
 			
 		}
 		
