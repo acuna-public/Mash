@@ -24,9 +24,9 @@
 					'Host' => $this->url.':'.$this->port,
 					'Accept' => '*/*',
 					'Connection' => 'Upgrade',
-					'Upgrade' => 'Socket',
-					'Sec-Socket-Key' => 'x3JJHMbDL1EzLkh9GBhXDw==',
-					'Sec-Socket-Version' => 13,
+					'Upgrade' => 'websocket',
+					'Sec-WebSocket-Key' => 'x3JJHMbDL1EzLkh9GBhXDw==',
+					'Sec-WebSocket-Version' => 13,
 					
 				];
 				
