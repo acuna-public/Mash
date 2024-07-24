@@ -233,6 +233,8 @@
 			$data['url'] = trim ($data['url'].(count ($data['params']) ? '?'.http_build_fquery ($data['params'], 2) : ''));
 			$this->queryOptions[CURLOPT_URL] = $data['url'];
 			
+			//debug ($data['url']);
+			
 			if ($data['url'] != $data['referer'])
 				$this->queryOptions[CURLOPT_REFERER] = $data['referer'];
 			
