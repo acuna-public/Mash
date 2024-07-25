@@ -45,7 +45,7 @@
 		}
 		
 		function getMessCode () {
-			return $this->item->getMessCode ().' ('.$this->url.')';
+			return $this->item->getMessCode ();
 		}
 		
 	}
