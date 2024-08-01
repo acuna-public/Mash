@@ -21,7 +21,7 @@
 		'slurp@inktomi' => 'Hot Bot',
 		
 		'lycos' => 'Lycos.com',
-		'whatuseek'	=> 'What You Seek',
+		'whatuseek'  => 'What You Seek',
 		'ia_archiver' => 'Alexa',
 		'is_archiver' => 'Archive.org',
 		'archive_org' => 'Archive.org',

@@ -409,11 +409,11 @@
 		} elseif ($find ('Playstation Vita', $key)) {
 			
 			$platform = 'PlayStation Vita';
-			$browser	= 'Browser';
+			$browser  = 'Browser';
 			
 		} elseif ($find (['Kindle Fire', 'Silk'], $key, $val)) {
 			
-			$browser	= $val == 'Silk' ? 'Silk' : 'Kindle';
+			$browser  = $val == 'Silk' ? 'Silk' : 'Kindle';
 			$platform = 'Kindle Fire';
 			
 			if (!($version = $result['version'][$key]) or !is_numeric ($version[0]))
@@ -486,7 +486,7 @@
 				
 			} elseif (strpos ($platform, 'BB') === 0) {
 				
-				$browser	= 'BlackBerry Browser';
+				$browser  = 'BlackBerry Browser';
 				$platform = 'BlackBerry';
 				
 			} elseif ($platform == 'BlackBerry' or $platform == 'PlayBook')
@@ -501,7 +501,7 @@
 			
 			$pKey = reset ($pKey);
 			$platform = 'PlayStation ' . preg_replace ('/[^\d]/i', '', $pKey);
-			$browser	= 'NetFront';
+			$browser  = 'NetFront';
 			
 		}
 		

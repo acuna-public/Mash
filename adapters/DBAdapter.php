@@ -1568,8 +1568,8 @@ PARTITION '.$this->addquotes ('pUnsort').' VALUES LESS THAN (MAXVALUE)';
 					if(mysql_affected_rows($link) > 0){
 							while($rowField = mysql_fetch_assoc($resultFields)){
 									$tablesArray[$tableName][$rowField['Field']] = array(
-											'type'	=> $rowField['Type'],
-											'null'	=> $rowField['Null'],
+											'type'  => $rowField['Type'],
+											'null'  => $rowField['Null'],
 											'key'	 => $rowField['Key'],
 											'default' => $rowField['Default'],
 											'extra' => $rowField['Extra']

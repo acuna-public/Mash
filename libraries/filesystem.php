@@ -700,56 +700,56 @@
 		
 		$exts = [
 			
-			'jpg'	=> 'image/jpeg',
+			'jpg'  => 'image/jpeg',
 			'jpeg' => 'image/jpeg',
-			'gif'	=> 'image/gif',
-			'png'	=> 'image/png',
+			'gif'  => 'image/gif',
+			'png'  => 'image/png',
 			
-			'ico'	=> 'image/x-icon',
+			'ico'  => 'image/x-icon',
 			
-			'pdf'	=> 'application/pdf',
+			'pdf'  => 'application/pdf',
 			
-			'tif'	=> 'image/tiff',
+			'tif'  => 'image/tiff',
 			'tiff' => 'image/tiff',
 			
-			'svg'	=> 'image/svg+xml',
+			'svg'  => 'image/svg+xml',
 			'svgz' => 'image/svg+xml',
 			
-			'swf'	=> 'application/x-shockwave-flash',
+			'swf'  => 'application/x-shockwave-flash',
 			
-			'zip'	=> 'application/zip',
+			'zip'  => 'application/zip',
 			'gz'	 => 'application/x-gzip',
-			'tar'	=> 'application/x-tar',
+			'tar'  => 'application/x-tar',
 			'bz'	 => 'application/x-bzip',
-			'bz2'	=> 'application/x-bzip2',
-			'rar'	=> 'application/x-rar-compressed',
-			'cab'	=> 'application/vnd.ms-cab-compressed',
+			'bz2'  => 'application/x-bzip2',
+			'rar'  => 'application/x-rar-compressed',
+			'cab'  => 'application/vnd.ms-cab-compressed',
 			
-			'exe'	=> 'application/x-msdownload',
-			'msi'	=> 'application/x-msdownload',
+			'exe'  => 'application/x-msdownload',
+			'msi'  => 'application/x-msdownload',
 			
-			'txt'	=> 'text/plain',
-			'asc'	=> 'text/plain',
+			'txt'  => 'text/plain',
+			'asc'  => 'text/plain',
 			
-			'htm'	=> 'text/html',
+			'htm'  => 'text/html',
 			'html' => 'text/html',
-			'css'	=> 'text/css',
+			'css'  => 'text/css',
 			'js'	 => 'text/javascript',
 			
-			'xml'	=> 'text/xml',
-			'xsl'	=> 'application/xsl+xml',
+			'xml'  => 'text/xml',
+			'xsl'  => 'application/xsl+xml',
 			
-			'mp3'	=> 'audio/mpeg',
-			'ogg'	=> 'application/ogg',
-			'wav'	=> 'audio/x-wav',
+			'mp3'  => 'audio/mpeg',
+			'ogg'  => 'application/ogg',
+			'wav'  => 'audio/x-wav',
 			
-			'avi'	=> 'video/x-msvideo',
-			'mpg'	=> 'video/mpeg',
+			'avi'  => 'video/x-msvideo',
+			'mpg'  => 'video/mpeg',
 			'mpeg' => 'video/mpeg',
-			'mov'	=> 'video/quicktime',
-			'flv'	=> 'video/x-flv',
+			'mov'  => 'video/quicktime',
+			'flv'  => 'video/x-flv',
 			
-			'php'	=> 'text/x-php',
+			'php'  => 'text/x-php',
 			
 		];
 		

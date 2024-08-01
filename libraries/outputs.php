@@ -490,8 +490,8 @@ creates
 		fclose($xp);
 		print "Written $file\n";
 		$CHUNKS++;
-		$PAYLOAD		= '';
-		$ITEMCOUNT	= 0;
+		$PAYLOAD	  = '';
+		$ITEMCOUNT  = 0;
 		
 	}
 	
@@ -546,7 +546,7 @@ creates
 		
 		$fp = fopen($file, "r");
 		
-		$CHUNKS	= 0;
+		$CHUNKS  = 0;
 		
 		while(!feof($fp)) {
 			$chunk = fgets($fp, 10240);

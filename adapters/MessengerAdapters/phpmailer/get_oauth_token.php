@@ -81,11 +81,11 @@ class Google extends AbstractProvider
 				$params = array_merge(
 						parent::getAuthorizationParameters($options),
 						array_filter([
-								'hd'					=> $this->hostedDomain,
+								'hd'				  => $this->hostedDomain,
 								'access_type' => $this->accessType,
 		'scope'			 => $this->scope,
 								// if the user is logged in with more than one account ask which one to use for the login!
-								'authuser'		=> '-1'
+								'authuser'	  => '-1'
 						])
 				);
 				return $params;
@@ -108,11 +108,11 @@ class Google extends AbstractProvider
 		protected function checkResponse(ResponseInterface $response, $data)
 		{
 				if (!empty($data['error'])) {
-						$code	= 0;
+						$code  = 0;
 						$error = $data['error'];
 
 						if (is_array($error)) {
-								$code	= $error['code'];
+								$code  = $error['code'];
 								$error = $error['message'];
 						}
 
