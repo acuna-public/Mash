@@ -135,4 +135,8 @@
 			return pathinfo ($this->file);
 		}
 		
+		function move (\File $to) {
+			return rename ($this->file, $to->file);
+		}
+		
 	}
